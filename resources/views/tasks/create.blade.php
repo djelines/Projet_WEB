@@ -64,16 +64,16 @@
 
 
         <!-- Boutons -->
-        <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+        <div class="flex flex-row items-end justify-end pt-4 border-gray-200 gap-4">
             <!-- Revenir -->
             <a href="{{ route('tasks.index') }}"
-               class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-white text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
+               class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-white text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
                 ← Revenir
             </a>
 
             <!-- Créer -->
             <button type="submit"
-            class="!px-4 py-2 !bg-teal-600 !text-white rounded-lg font-semibold transition duration-300 ease-in-out transform hover:!bg-teal-700 hover:scale-105">
+            class="!px-4 py-2 !bg-teal-600 !text-white rounded-lg font-semibold text-sm transition duration-300 ease-in-out transform hover:!bg-teal-700 hover:scale-105 uppercase">
                 Créer →
             </button>
         </div>

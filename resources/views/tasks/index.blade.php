@@ -34,21 +34,7 @@
                         </h3>
                         <hr>
 
-                        <!-- Boutons d'action -->
-                        <div class="flex justify-center space-x-2 mt-4 mb-4">
-                            <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                Modifier
-                            </a>
-                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="!bg-rose-800 hover:!bg-rose-900 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                    Supprimer
-                                </button>
-                            </form>
-                        </div>
-
-                        <hr>
+                        
 
                         <!-- Couleurs des Catégorie-->
                         @php
@@ -81,12 +67,33 @@
                         <!-- Description en italique -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
 
+                        <!-- Boutons d'action -->
+                        <hr>
+                        <div class="flex justify-center space-x-2 mt-4 mb-4">
+                            <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                Modifier
+                            </a>
+                            <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="!bg-rose-800 hover:!bg-rose-900 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                        <hr>
+
                         <!-- Détails de la tâche (Utilisateur et Date) -->
                         <div class="flex justify-between items-center text-xs text-gray-500 mt-3">
                             <span class="font-medium">{{ $task->user->first_name ?? ' ' }} {{ $task->user->last_name ?? ' ' }}</span>
                             <span>{{ $task->created_at->format('d/m/Y H:i') }}</span>
                         </div>
+
+
+                        
                     </div>
+
+                    
                 @empty
                     <!-- Affichage d'une image lorsque la liste des tâches est vide -->
                     <div class="w-full text-center">
@@ -95,7 +102,12 @@
                         <p class="text-gray-500 mt-4">Il n'y a pas encore de tâches à afficher.</p>
                     </div>
                 @endforelse
+
+            
+
             </div>
+
+            
 
             <div class="pt-5 px-4">
                 {{ $tasks->links() }}
