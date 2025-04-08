@@ -5,10 +5,11 @@
             </h1>
         </x-slot>
 
-    <div class="container max-w-3xl mx-auto mt-6 p-6 bg-white rounded-xl shadow-lg">
-        <h1 class="text-2xl font-semibold text-center text-gray-800 mb-4">Modifier la Tâche</h1>
-        
-        <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="space-y-4">
+    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6">
+        <h1 class="text-2xl font-semibold text-white p-6 items-center text-center bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-2xl rounded-tr-2xl ">Modifier la Tâche</h1>
+
+    
+        <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="space-y-4 p-8 bg-white rounded-xl shadow-lg">
             @csrf
             @method('PUT')
 
@@ -52,7 +53,7 @@
             </div>
 
             <!-- Boutons -->
-            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+            <div class="flex flex-row items-end justify-end pt-4 border-gray-200 gap-4">
                 <!-- Revenir -->
                 <a href="{{ route('tasks.index') }}"
                     class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-white text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
@@ -61,9 +62,11 @@
 
                 <!-- Mettre à jour -->
                 <button type="submit"
-                    class="!px-4 py-2 !bg-teal-600 !text-white rounded-lg font-semibold transition duration-300 ease-in-out transform hover:!bg-teal-700 hover:scale-105">
+                    class="!px-4 py-2 !bg-teal-600 !text-white rounded-lg font-semibold text-sm transition duration-300 ease-in-out transform hover:!bg-teal-700 hover:scale-105 uppercase">
                     Mettre à jour →
                 </button>
+                <!-- Boutons -->
+  
             </div>
         </form>
     </div>
