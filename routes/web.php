@@ -10,6 +10,7 @@ use App\Http\Controllers\KnowledgeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskController;
 
 // Redirect the root path to /dashboard
 Route::redirect('/', 'dashboard');
@@ -45,6 +46,11 @@ Route::middleware('auth')->group(function () {
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
+
+        // Tasks
+        Route::resource('tasks', TaskController::class);
+
+
     });
 
 });
