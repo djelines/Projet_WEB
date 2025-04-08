@@ -42,6 +42,11 @@ class TaskController extends Controller
             ''
         ]);
 
+        // Si la validation échoue, Laravel redirigera l'utilisateur et injectera les erreurs dans la session.
+        // Si la validation réussit, l'exécution continue normalement.
+    
+        // Création de la tâche si validation réussie
+
         Task::create([
             'title' => $request->title,
             'description' => $request->description,
@@ -77,14 +82,14 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $request->validate([
-            'titre' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'categorie' => 'required|string',
+            'category' => 'required|string',
         ]);
 
-        $task->update($request->only('titre', 'description', 'categorie'));
+        $task->update($request->only('title', 'description', 'category'));
 
-        return redirect()->route('tasks.index')->with('success', 'Tâche modifiée !');
+        return redirect()->route('tasks.index')->with('success', 'Tâche ' . $task->title . ' modifiée !');
     }
 
     /**
@@ -93,6 +98,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Tâche supprimée !');
+        return redirect()->route('tasks.index')->with('success', 'Tâche ' . $task->title . ' supprimée !');
+
     }
 }
