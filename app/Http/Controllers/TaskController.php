@@ -89,7 +89,7 @@ class TaskController extends Controller
 
         $task->update($request->only('title', 'description', 'category'));
 
-        return redirect()->route('tasks.index')->with('success', 'Tâche ' . $task->title . ' modifiée !');
+        return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' modifiée !');
     }
 
     /**
@@ -98,7 +98,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Tâche ' . $task->title . ' supprimée !');
+        return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' supprimée !');
 
     }
 }
