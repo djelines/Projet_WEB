@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class TaskController extends Controller
@@ -16,6 +18,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('user')->get();
+        $tasks = Task::paginate(10);
         return view('tasks.index', compact('tasks'));
     }
     /**
@@ -31,18 +34,23 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate([
-            'titre' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'categorie' => 'required|string',
+            'category' => 'required|string',
+            ''
         ]);
 
         Task::create([
-            'titre' => $request->titre,
+            'title' => $request->title,
             'description' => $request->description,
-            'categorie' => $request->categorie,
+            'category' => $request->category, 
             'user_id' => Auth::id(),
         ]);
+        
+        // dd($request->all());  // Ceci va afficher toutes les données envoyées dans la requête
+
 
         return redirect()->route('tasks.index')->with('success', 'Tâche créée avec succès !');
     }
