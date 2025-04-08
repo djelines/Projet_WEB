@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
 
         // Common life
-        Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
+        //Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
 
         // Tasks
         Route::resource('tasks', TaskController::class);

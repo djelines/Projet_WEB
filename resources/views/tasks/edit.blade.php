@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
             <h1 class="flex items-center gap-2 text-xl font-semibold text-gray-800">
-                <span class="text-blue-600">{{ __('Dashboard') }}</span>
+                <span class="text-blue-600">{{ __('Vie Commune') }}</span>
             </h1>
         </x-slot>
 
