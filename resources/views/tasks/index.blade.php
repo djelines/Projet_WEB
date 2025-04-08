@@ -8,12 +8,20 @@
     <!-- begin: grid -->
     <div class="grid lg:grid-cols-2 gap-5 lg:gap-7.5 items-stretch">
         <div class="lg:col-span-2">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-1">
                 <h2 class="text-xl font-semibold text-gray-800">Liste des Tâches</h2>
                 <a href="{{ route('tasks.create') }}" class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
                     Ajouter une tâche
                 </a>
+                
             </div>
+            <!-- Bouton pour trier par date (toggle ascendant/descendant) -->
+            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4">
+                <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
+                <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-xs transition duration-300 ease-in-out">
+                    Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
+                </button>
+            </form>
 
             <hr>
             @if(session('success'))

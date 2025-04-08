@@ -15,12 +15,16 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::with('user')->get();
-        $tasks = Task::paginate(9);
+        
+        $sortOrder = $request->get('sort', 'asc');  // Si 'sort' est présent dans l'URL, sinon prends 'asc' par défaut
+
+        $tasks = Task::orderBy('created_at', $sortOrder)->paginate(9);
+
         return view('tasks.index', compact('tasks'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -46,7 +50,6 @@ class TaskController extends Controller
         // Si la validation réussit, l'exécution continue normalement.
     
         // Création de la tâche si validation réussie
-
         Task::create([
             'title' => $request->title,
             'description' => $request->description,
