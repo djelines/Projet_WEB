@@ -137,7 +137,9 @@ class TaskController extends Controller
                 'completed' => true,
                 'comment' => $request->input('comment'),
             ]);
-        } 
+        } else {
+            return back()->with('error', 'Tâche déjà pointée.');
+        }
 
         // Redirects to the index page with the success message
         return redirect()->route('tasks.index')->with('success', 'Tâche : \'' . $task->title . '\' marquée comme terminée !');

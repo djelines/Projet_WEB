@@ -10,10 +10,13 @@
         <div class="lg:col-span-2">
             <div class="flex justify-between items-center mb-1">
                 <h2 class="text-xl font-semibold text-gray-800">Liste des Tâches</h2>
-                <a href="{{ route('tasks.create') }}" class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
-                    Ajouter une tâche
-                </a>
-                
+                <!-- Ajouter une tâche (uniquement si l'utilisateur peut créer une tâche) -->
+                @can('create', App\Models\Task::class)
+                    <a href="{{ route('tasks.create') }}" class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
+                        Ajouter une tâche
+                    </a>
+                @endcan
+
             </div>
             <!-- Button for sorting by date (toggle ascending/descending) -->
             <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4">
@@ -21,9 +24,10 @@
                 <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-xs transition duration-300 ease-in-out">
                     Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
                 </button>
-                <a href="{{ route('tasks.history') }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                Historique
-                </a>
+                @can('viewHistory', App\Models\Task::class)
+                    <a href="{{ route('tasks.history') }}" class="text-sm text-blue-600 hover:underline">Voir mon historique</a>
+                @endcan
+
             </form>
 
             <hr>
@@ -77,6 +81,7 @@
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
 
                         <!-- Actions (Mark as Completed, Comment) -->
+                         // AJOUT DU CAN
                         <hr>
                         <div class="flex justify-center space-x-2 mt-4 mb-4">
                             @if(auth()->user()->school()->pivot->role === 'student' && !in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
@@ -91,9 +96,10 @@
                                 </div>
                             @endif
                         </div>
-                        
+                        // FIN DU CAN 
                         <!-- Actions Buttons -->
                         <hr>
+                        // ajout du can 
                         <div class="flex justify-center space-x-2 mt-4 mb-4">
                             <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
                                 Modifier
@@ -106,6 +112,7 @@
                                 </button>
                             </form>
                         </div>
+                        // fin du can
                         <hr>
 
                         <!-- Task details (User and Date) -->
