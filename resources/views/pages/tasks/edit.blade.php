@@ -3,7 +3,7 @@
             <h1 class="flex items-center gap-2 text-xl font-semibold text-gray-800">
                 <span class="text-blue-600">{{ __('Vie Commune') }}</span>
             </h1>
-        </x-slot>
+    </x-slot>
 
     <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6">
         <h1 class="text-2xl font-semibold text-white p-6 items-center text-center bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-2xl rounded-tr-2xl ">Modifier la Tâche</h1>
@@ -13,7 +13,7 @@
             @csrf
             @method('PUT')
 
-            <!-- Titre -->
+            <!-- Title -->
             <div class="space-y-2">
                 <label for="title" class="block text-base font-semibold text-gray-800">Titre</label>
                 <input type="text" name="title" id="title" 
@@ -30,7 +30,7 @@
                     placeholder="Ajoutez des détails...">{{ $task->description }}</textarea>
             </div>
 
-            <!-- Catégorie -->
+            <!-- Category -->
             <div class="space-y-2">
                 <label for="category" class="block text-base font-semibold text-gray-800">Catégorie</label>
                 <select name="category" id="category" 
@@ -52,20 +52,19 @@
                 </select>
             </div>
 
-            <!-- Boutons -->
+            <!-- Buttons -->
             <div class="flex flex-row items-end justify-end pt-4 border-gray-200 gap-4">
-                <!-- Revenir -->
+                <!-- Back -->
                 <a href="{{ route('tasks.index') }}"
                     class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-white text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
                     ← Revenir
                 </a>
 
-                <!-- Mettre à jour -->
+                <!-- Update -->
                 <button type="submit"
                     class="!px-4 py-2 !bg-teal-600 !text-white rounded-lg font-semibold text-sm transition duration-300 ease-in-out transform hover:!bg-teal-700 hover:scale-105 uppercase">
                     Mettre à jour →
                 </button>
-                <!-- Boutons -->
   
             </div>
         </form>

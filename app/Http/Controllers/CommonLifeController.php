@@ -6,11 +6,7 @@ use Illuminate\Http\Request;
 
 class CommonLifeController extends Controller
 {
-    public function index() {
-        return view('pages.commonLife.index');
-    }
-
-    /**
+     /**
      * 
      * Je sais, j’aurais dû tout faire dans "CommonLife"… mais au final j’ai gardé "Task"
      * Je t'explique pourquoi j'ai gardé "Task" au lieu de créer un modèle "CommonLife" :
@@ -23,5 +19,9 @@ class CommonLifeController extends Controller
      * Désolé Thibaud si tu vois ce message, j'espère que tu m'en voudras pas et que tu m'en tiendras pas rigueur.
      * 
      */
+    
+    public function index() {
+        return view('pages.commonLife.index');
+    }
 
 }

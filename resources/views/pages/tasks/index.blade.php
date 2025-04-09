@@ -15,7 +15,7 @@
                 </a>
                 
             </div>
-            <!-- Bouton pour trier par date (toggle ascendant/descendant) -->
+            <!-- Button for sorting by date (toggle ascending/descending) -->
             <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4">
                 <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
                 <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-xs transition duration-300 ease-in-out">
@@ -30,21 +30,19 @@
                 </div>
             @endif
 
-            <!-- Flexbox + wrap pour permettre aux éléments de revenir à la ligne -->
+            <!-- Flexbox + wrap to allow elements to return to the line -->
             <div class="flex flex-wrap gap-8 mt-6 justify-center">
                 @forelse ($tasks as $task)
                     <div class="max-w-xs bg-white shadow-lg rounded-lg p-6 relative transform transition duration-300 hover:scale-105 hover:shadow-xl border-2 border-gray-200 flex flex-col w-full sm:w-1/2 lg:w-1/3">
                         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-sm rounded-tr-sm"></div>
 
-                        <!-- Titre centré et coloré en fonction de la catégorie -->
+                        <!-- Title centred and coloured according to category -->
                         <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center ">
                             {{ $task->title }}
                         </h3>
                         <hr>
 
-                        
-
-                        <!-- Couleurs des Catégorie-->
+                        <!-- Category colours-->
                         @php
                             $categoryColors = [
                                 'Ménage' => 'bg-blue-50',
@@ -65,17 +63,17 @@
                             $color = $categoryColors[$task->category] ?? 'bg-gray-400';
                         @endphp
 
-                        <!-- Catégorie -->
+                        <!-- Category -->
                         <p class="text-sm text-gray-600 mt-4 mb-4">
                             <span class="{{ $color }} text-slate-950 px-2 py-1 rounded-md text-xs border">
                                 {{ $task->category }}
                             </span>
                         </p>
 
-                        <!-- Description en italique -->
+                        <!-- Description in italics -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
 
-                        <!-- Boutons d'action -->
+                        <!-- Actions Buttons -->
                         <hr>
                         <div class="flex justify-center space-x-2 mt-4 mb-4">
                             <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
@@ -91,7 +89,7 @@
                         </div>
                         <hr>
 
-                        <!-- Détails de la tâche (Utilisateur et Date) -->
+                        <!-- Task details (User and Date) -->
                         <div class="flex justify-between items-center text-xs text-gray-500 mt-3">
                             <span class="font-medium">{{ $task->user->first_name ?? ' ' }} {{ $task->user->last_name ?? ' ' }}</span>
                             <span>{{ $task->created_at->format('d/m/Y H:i') }}</span>
@@ -103,7 +101,7 @@
 
                     
                 @empty
-                    <!-- Affichage d'une image lorsque la liste des tâches est vide -->
+                    <!-- Display an image when the task list is empty -->
                     <div class="w-full text-center">
                     <img src="{{ asset('images/empty.svg') }}" alt="Aucune tâche" class="mx-auto w-1/2">
 
