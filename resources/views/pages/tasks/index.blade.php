@@ -9,7 +9,7 @@
     <div class="grid lg:grid-cols-2 gap-5 lg:gap-7.5 items-stretch">
         <div class="lg:col-span-2">
             <div class="flex justify-between items-center mb-1">
-                <h2 class="text-xl font-semibold text-gray-800">Liste des Tâches</h2>
+                <h2 class="text-2xl font-semibold text-gray-800">Liste des Tâches</h2>
                 <!-- Ajouter une tâche (uniquement si l'utilisateur peut créer une tâche) -->
                 @can('create', App\Models\Task::class)
                     <a href="{{ route('tasks.create') }}" class="bg-purple-700 hover:bg-purple-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
@@ -19,13 +19,13 @@
 
             </div>
             <!-- Button for sorting by date (toggle ascending/descending) -->
-            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4">
+            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4 gap-4">
                 <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
-                <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-xs transition duration-300 ease-in-out">
+                <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
                     Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
                 </button>
                 @can('viewHistory', App\Models\Task::class)
-                    <a href="{{ route('tasks.history') }}" class="text-sm text-blue-600 hover:underline">Voir mon historique</a>
+                    <a href="{{ route('tasks.history') }}" class="bg-violet-500 hover:bg-violet-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">Voir mon historique</a>
                 @endcan
 
             </form>
@@ -85,8 +85,8 @@
                             <hr>
                             <div class="flex justify-center space-x-2 mt-4 mb-4">
                                 @if(auth()->user()->school()->pivot->role === 'student' && !in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
-                                    <a href="{{ route('tasks.show', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                        Voir ?
+                                    <a href="{{ route('tasks.show', $task->id) }}" class="bg-emerald-500 hover:bg-emerald-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                        Valider la Tâche
                                     </a>
                                 @elseif(auth()->user()->school()->pivot->role === 'student' && in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
                                     <div class="mt-2">
@@ -98,10 +98,11 @@
                         @endcan
 
                         <!-- Actions Buttons -->
+                        @can('update', $task)
                         <hr>
                         
                         <div class="flex justify-center space-x-2 mt-4 mb-4">
-                        @can('update', $task)
+                        
                             <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
                                 Modifier
                             </a>
@@ -115,10 +116,11 @@
                                     Supprimer
                                 </button>
                             </form>
-                            @endcan
+                           
                         </div>
                        
                         <hr>
+                        @endcan
 
                         <!-- Task details (User and Date) -->
                         <div class="flex justify-between items-center text-xs text-gray-500 mt-3">

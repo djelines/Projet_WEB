@@ -72,10 +72,12 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
-        return view('pages.tasks.show', compact('task'));
+        $fromHistory = request()->boolean('from_history');
+
+        return view('pages.tasks.show', compact('task', 'fromHistory'));
 
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -153,8 +155,8 @@ class TaskController extends Controller
     public function viewHistory()
     {
         $user = auth()->user();
-        $completedTasks = $user->tasks()->wherePivot('completed', true)->get();
-
+        $completedTasks = $user->tasks()->wherePivot('completed', true)->paginate(3);
+        
         return view('pages.tasks.history', compact('completedTasks'));
     }
 
