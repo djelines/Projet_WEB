@@ -97,25 +97,27 @@
                             </div>
                         @endcan
 
-                        <!-- Actions modifier/supprimer (uniquement pour les admins) -->
+                        <!-- Actions Buttons -->
+                        <hr>
+                        
+                        <div class="flex justify-center space-x-2 mt-4 mb-4">
                         @can('update', $task)
-                            <div class="flex justify-center space-x-2 mt-4 mb-4">
-                                <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                    Modifier
-                                </a>
-                            </div>
+                            <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                Modifier
+                            </a>
                         @endcan
-
                         @can('delete', $task)
                             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
+
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="!bg-rose-800 hover:!bg-rose-900 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
                                     Supprimer
                                 </button>
                             </form>
-                        @endcan
-
+                            @endcan
+                        </div>
+                       
                         <hr>
 
                         <!-- Task details (User and Date) -->
