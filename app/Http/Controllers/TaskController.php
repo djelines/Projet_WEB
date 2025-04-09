@@ -70,9 +70,11 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Task $task)
     {
         //
+        return view('pages.tasks.show', compact('task'));
+
     }
 
     /**
@@ -96,7 +98,7 @@ class TaskController extends Controller
             'category' => 'required|string',
         ]);
 
-        // UpdaModifies and updates new valueste 
+        // Modifies and updates new valueste 
         $task->update($request->only('title', 'description', 'category'));
 
         // Redirects to the index page with the success message
@@ -113,4 +115,46 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' supprimée !');
 
     }
+
+    /**
+     * 
+     */
+    public function markAsCompleted(Task $task, Request $request)
+    {
+        $user = auth()->user();
+        $userRole = $user->school()->pivot->role;
+
+        if ($userRole !== 'student') {
+            return back()->withErrors('Seuls les étudiants peuvent marquer des tâches comme terminées.');
+        }
+
+        // Vérifier si l'utilisateur a déjà pointé cette tâche
+        $taskUser = $task->users()->where('user_id', $user->id)->first();
+
+        if (!$taskUser) {
+            // Ajouter une nouvelle entrée pour l'utilisateur
+            $task->users()->attach($user->id, [
+                'completed' => true,
+                'comment' => $request->input('comment'),
+            ]);
+        } 
+
+        // Redirects to the index page with the success message
+        return redirect()->route('tasks.index')->with('success', 'Tâche : \'' . $task->title . '\' marquée comme terminée !');
+        
+    }
+
+    /**
+     * 
+     * 
+     */
+    public function viewHistory()
+    {
+        $user = auth()->user();
+        $completedTasks = $user->tasks()->wherePivot('completed', true)->get();
+
+        return view('pages.tasks.history', compact('completedTasks'));
+    }
+
+
 }

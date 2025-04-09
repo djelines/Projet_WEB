@@ -19,4 +19,12 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relation Many-to-Many with students
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'task_user')
+                    ->withPivot('completed', 'comment')
+                    ->withTimestamps();
+    }
 }

@@ -21,6 +21,9 @@
                 <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-xs transition duration-300 ease-in-out">
                     Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
                 </button>
+                <a href="{{ route('tasks.history') }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                Historique
+                </a>
             </form>
 
             <hr>
@@ -73,6 +76,22 @@
                         <!-- Description in italics -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
 
+                        <!-- Actions (Mark as Completed, Comment) -->
+                        <hr>
+                        <div class="flex justify-center space-x-2 mt-4 mb-4">
+                            @if(auth()->user()->school()->pivot->role === 'student' && !in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
+                            <a href="{{ route('tasks.show', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                Voir ?
+                            </a>
+                            @elseif(auth()->user()->school()->pivot->role === 'student' && in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
+                                <!-- Display comment if task is completed -->
+                                <div class="mt-2">
+                                    <p class="font-medium">Votre commentaire :</p>
+                                    <p>{{ $task->users->firstWhere('id', auth()->user()->id)->pivot->comment ?? 'Aucun commentaire' }}</p>
+                                </div>
+                            @endif
+                        </div>
+                        
                         <!-- Actions Buttons -->
                         <hr>
                         <div class="flex justify-center space-x-2 mt-4 mb-4">

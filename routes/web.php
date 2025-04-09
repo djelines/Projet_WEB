@@ -12,6 +12,7 @@ use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 
+
 // Redirect the root path to /dashboard
 Route::redirect('/', 'dashboard');
 
@@ -48,7 +49,15 @@ Route::middleware('auth')->group(function () {
         //Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
 
         // Tasks
+        // Route de complétion + historique, définie avant le resource
+        Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])->name('tasks.complete');
+        Route::get('/tasks/history', [TaskController::class, 'viewHistory'])->name('tasks.history');
         Route::resource('tasks', TaskController::class);
+        
+    
+      
+
+
 
 
     });

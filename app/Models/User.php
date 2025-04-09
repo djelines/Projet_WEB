@@ -81,4 +81,12 @@ class User extends Authenticatable
             ->withPivot('role')
             ->first();
     }
+
+    // Relation Many-to-Many with tasks
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+                    ->withPivot('completed', 'comment')
+                    ->withTimestamps();
+    }
 }
