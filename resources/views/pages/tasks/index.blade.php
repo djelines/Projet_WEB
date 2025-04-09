@@ -80,30 +80,33 @@
                         <!-- Description in italics -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
 
-                        <!-- Actions (Mark as Completed, Comment) -->
-                         // AJOUT DU CAN
-                        <hr>
-                        <div class="flex justify-center space-x-2 mt-4 mb-4">
-                            @if(auth()->user()->school()->pivot->role === 'student' && !in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
-                            <a href="{{ route('tasks.show', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                Voir ?
-                            </a>
-                            @elseif(auth()->user()->school()->pivot->role === 'student' && in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
-                                <!-- Display comment if task is completed -->
-                                <div class="mt-2">
-                                    <p class="font-medium">Votre commentaire :</p>
-                                    <p>{{ $task->users->firstWhere('id', auth()->user()->id)->pivot->comment ?? 'Aucun commentaire' }}</p>
-                                </div>
-                            @endif
-                        </div>
-                        // FIN DU CAN 
-                        <!-- Actions Buttons -->
-                        <hr>
-                        // ajout du can 
-                        <div class="flex justify-center space-x-2 mt-4 mb-4">
-                            <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
-                                Modifier
-                            </a>
+                        <!-- Actions pour pointer, commenter, etc. -->
+                        @can('point', App\Models\Task::class)
+                            <hr>
+                            <div class="flex justify-center space-x-2 mt-4 mb-4">
+                                @if(auth()->user()->school()->pivot->role === 'student' && !in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
+                                    <a href="{{ route('tasks.show', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                        Voir ?
+                                    </a>
+                                @elseif(auth()->user()->school()->pivot->role === 'student' && in_array(auth()->user()->id, $task->users->pluck('id')->toArray()))
+                                    <div class="mt-2">
+                                        <p class="font-medium">Votre commentaire :</p>
+                                        <p>{{ $task->users->firstWhere('id', auth()->user()->id)->pivot->comment ?? 'Aucun commentaire' }}</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endcan
+
+                        <!-- Actions modifier/supprimer (uniquement pour les admins) -->
+                        @can('update', $task)
+                            <div class="flex justify-center space-x-2 mt-4 mb-4">
+                                <a href="{{ route('tasks.edit', $task->id) }}" class="bg-orange-400 hover:bg-orange-600 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out transform hover:scale-105">
+                                    Modifier
+                                </a>
+                            </div>
+                        @endcan
+
+                        @can('delete', $task)
                             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -111,8 +114,8 @@
                                     Supprimer
                                 </button>
                             </form>
-                        </div>
-                        // fin du can
+                        @endcan
+
                         <hr>
 
                         <!-- Task details (User and Date) -->
