@@ -39,6 +39,18 @@ Route::middleware('auth')->group(function () {
         // Knowledge
         Route::get('knowledge', [KnowledgeController::class, 'index'])->name('knowledge.index');
 
+        // Route pour afficher le formulaire de création de bilan
+        Route::get('/knowledge/create', [KnowledgeController::class, 'create'])->name('knowledge.create');
+        Route::post('/knowledge/store', [KnowledgeController::class, 'store'])->name('knowledge.store');
+
+
+        // Route pour afficher un bilan spécifique
+        Route::get('/knowledge/{id}', [KnowledgeController::class, 'show'])->name('knowledge.show');
+
+        // Route pour supprimer un bilan
+        Route::delete('/knowledge/{id}', [KnowledgeController::class, 'destroy'])->name('knowledge.destroy');
+
+                
         // Groups
         Route::get('groups', [GroupController::class, 'index'])->name('group.index');
 
@@ -75,7 +87,6 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:point,App\Models\Task')
             ->name('tasks.complete');
 
-        
        
 
     });
