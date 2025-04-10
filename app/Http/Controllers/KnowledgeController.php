@@ -17,12 +17,19 @@ class KnowledgeController extends Controller
      */
     public function index(Request $request)
     {
-        $assessments = Assessment::query();
+        $order = $request->get('sort', 'desc'); // Par défaut, tri du plus récent au plus ancien
 
-        $assessments = $assessments->latest()->get(); // Récupère les bilans filtrés
+        // Vérifie si le tri est demandé par ID ou par date
+        $sortBy = $request->get('sort_by', 'created_at'); // tri par défaut sur created_at
 
-        return view('pages.knowledge.index', compact('assessments'));
+        // Applique le tri sur le bon champ
+        $assessments = Assessment::orderBy($sortBy, $order)->get();
+
+        return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
     }
+
+
+
 
     /**
      * Affiche le formulaire de création de bilan

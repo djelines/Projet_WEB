@@ -14,6 +14,20 @@
                 Créer un nouveau bilan
             </a>
         </div>
+        <div class="flex justify-end mb-4 gap-4">
+            <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
+            class="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                Trier par date 
+            </a>
+
+            <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'id']) }}"
+            class="inline-block bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                Trier par ID 
+            </a>
+        </div>
+
+
+
 
         <hr>
         <!-- Message de succès -->
