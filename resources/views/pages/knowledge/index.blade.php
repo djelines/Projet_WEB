@@ -31,21 +31,22 @@
         <tbody>
             <!-- Exemple de boucle pour afficher les bilans générés -->
             @foreach($assessments as $assessment)
-                <tr>
-                    <td>{{ $assessment['id'] }}</td>
-                    <td>{{ implode(', ', $assessment['languages']) }}</td>
-                    <td>{{ $assessment['num_questions'] }}</td>
-                    <td>{{ $assessment['created_at'] }}</td>
-                    <td>
-                        <a href="{{ route('knowledge.show', $assessment['id']) }}" class="btn btn-info btn-sm">Voir</a>
-                        <form action="{{ route('knowledge.destroy', $assessment['id']) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
+        <tr>
+            <td>{{ $assessment->id }}</td>
+            <td>{{ implode(', ', $assessment->languages) }}</td>
+            <td>{{ $assessment->num_questions }}</td>
+            <td>{{ $assessment->created_at->format('d/m/Y H:i') }}</td>
+            <td>
+                <a href="{{ route('knowledge.show', $assessment->id) }}" class="btn btn-info btn-sm">Voir</a>
+                <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+
         </tbody>
     </table>
 

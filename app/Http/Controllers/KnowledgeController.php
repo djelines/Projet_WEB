@@ -6,19 +6,24 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use App\Models\Assessment;
 use Illuminate\Support\Facades\Http;
 
 class KnowledgeController extends Controller
 {
     /**
-     * Affiche la page des bilans de compétence.
-     *
-     * @return Factory|View|Application|object
+     * Affiche la page des bilans de compétence depuis la base de données.
      */
-    public function index() {
-        $assessments = [
-            // Exemple de bilans générés, normalement tu utiliseras une base de données
-        ];
+    public function index(Request $request)
+    {
+        $assessments = Assessment::query();
+
+        // Filtrer en fonction de la présence du paramètre 'show_brouillons'
+        if ($request->input('show_brouillons') === 'false') {
+            $assessments = $assessments->where('brouillon', false);
+        }
+
+        $assessments = $assessments->latest()->get(); // Récupère les bilans filtrés
 
         return view('pages.knowledge.index', compact('assessments'));
     }
@@ -28,8 +33,7 @@ class KnowledgeController extends Controller
      */
     public function create()
     {
-        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C#']; // Liste des langages disponibles pour l'évaluation
-
+        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C#'];
         return view('pages.knowledge.create', compact('languages'));
     }
 
@@ -38,74 +42,81 @@ class KnowledgeController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation des données envoyées
         $validated = $request->validate([
             'languages' => 'required|array|min:1',
             'num_questions' => 'required|integer|min:1|max:20',
+            'difficulty' => 'required|string|in:débutant,intermédiaire,expert',
+            'brouillon' => 'nullable|boolean', // Validation du champ brouillon
         ]);
 
-        // Appel à l'API Gemini pour générer des QCM
-        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions']);
+        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['difficulty']);
 
-        // Retourner la vue avec le QCM généré
-        return view('pages.knowledge.show', compact('qcm'));
+        if (isset($qcm['error'])) {
+            return back()->with('error', $qcm['error']);
+        }
+
+        $assessment = Assessment::create([
+            'languages' => $validated['languages'],
+            'num_questions' => $validated['num_questions'],
+            'difficulty' => $validated['difficulty'],
+            'questions' => $qcm,
+            'brouillon' => $request->has('brouillon'), // Enregistre la valeur de brouillon
+        ]);
+
+        return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
     }
 
     /**
-     * Affiche le bilan de compétence généré
+     * Affiche un bilan spécifique
      */
     public function show($id)
     {
-        // Logique pour récupérer un bilan spécifique à partir de la base de données
-        $assessment = [
-            'id' => $id,
-            'languages' => ['PHP', 'JavaScript'],
-            'num_questions' => 5,
-            'created_at' => '2025-04-10 14:00:00',
-        ];
-
+        $assessment = Assessment::findOrFail($id);
         return view('pages.knowledge.show', compact('assessment'));
     }
 
     /**
-     * Supprime un bilan de compétence
+     * Supprime un bilan
      */
     public function destroy($id)
     {
+        $assessment = Assessment::findOrFail($id);
+        $assessment->delete();
         return redirect()->route('knowledge.index')->with('success', 'Bilan supprimé avec succès');
     }
 
     /**
-     * Utilise l'API Gemini pour générer des QCM
+     * Génère un QCM avec Gemini
      */
-    private function generateQCM(array $languages, int $numQuestions)
+    private function generateQCM(array $languages, int $numQuestions, string $difficulty)
     {
-        $prompt = "Je veux générer un QCM pour évaluer des étudiants sur des langages de programmation spécifiques. Les langages à évaluer sont : " . implode(', ', $languages) . ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages de programmation fournis. La réponse doit être au format JSON uniquement, sans rien d'autre. Chaque question doit inclure les éléments suivants :\n- \"question\": la question sous forme de texte.\n- \"choices\": un tableau des choix possibles.\n- \"correct_answer\": la réponse correcte parmi les choix.";
+        $prompt = "Je veux générer un QCM de niveau $difficulty pour évaluer des étudiants sur les langages suivants : " . implode(', ', $languages) . ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. La réponse doit être au format JSON uniquement. Chaque question doit contenir :
+        - \"question\" : le texte de la question
+        - \"choices\" : un tableau de choix
+        - \"correct_answer\" : la bonne réponse.";
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . config('services.gemini.api_key'), [
-            'contents' => [
-                [
-                    'parts' => [
-                        ['text' => $prompt]
-                    ]
-                ]
-            ]
+            'contents' => [[ 'parts' => [[ 'text' => $prompt ]] ]]
         ]);
 
-        // Si la réponse est réussie, on extrait les questions générées
         if ($response->successful()) {
             $responseData = $response->json();
-            $questionsJson = $responseData['candidates'][0]['content']['parts'][0]['text'];
+            if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
+                $questionsJson = trim($responseData['candidates'][0]['content']['parts'][0]['text']);
+                $questionsJson = preg_replace('/^```(json)?|```$/i', '', $questionsJson);
+                \Log::debug("JSON nettoyé : " . $questionsJson);
 
-            // Décoder le JSON pour le transformer en tableau PHP
-            $questions = json_decode($questionsJson, true);
+                $questions = json_decode($questionsJson, true);
 
-            return $questions; // Retourne les questions générées
+                if (json_last_error() === JSON_ERROR_NONE && is_array($questions) && count($questions) > 0) {
+                    return $questions;
+                }
+                return ['error' => 'Format JSON non valide ou aucune question.'];
+            }
         }
 
-        // En cas d'échec de l'API
         return ['error' => 'Erreur lors de la génération du QCM.'];
     }
 }
