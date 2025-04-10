@@ -10,6 +10,7 @@ use App\Policies\TaskPolicy;
 class AppServiceProvider extends ServiceProvider
 {
 
+    // Protected TaskPolicy
     protected $policies = [
         Task::class => TaskPolicy::class,
     ];

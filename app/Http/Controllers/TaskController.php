@@ -119,7 +119,18 @@ class TaskController extends Controller
     }
 
     /**
+     * Mark a task as completed for the authenticated student.
+     *
+     * This method allows students to mark a task as completed, provided that:
+     * - The user is a student.
+     * - The user has not previously marked the task as completed.
      * 
+     * If these conditions are met, the task completion is recorded in the pivot table with an optional comment.
+     * Otherwise, an error message is returned.
+     *
+     * @param Task $task The task being marked as completed.
+     * @param Request $request The HTTP request containing the comment.
+     * @return \Illuminate\Http\RedirectResponse A redirect to the task index page with a success or error message.
      */
     public function markAsCompleted(Task $task, Request $request)
     {
@@ -143,14 +154,17 @@ class TaskController extends Controller
             return back()->with('error', 'Tâche déjà pointée.');
         }
 
-        // Redirects to the index page with the success message
+        // Redirection vers la page index avec un message de succès
         return redirect()->route('tasks.index')->with('success', 'Tâche : \'' . $task->title . '\' marquée comme terminée !');
-        
     }
 
     /**
-     * 
-     * 
+     * Display the history of completed tasks for the authenticated user.
+     *
+     * This method retrieves tasks that the authenticated user has marked as completed
+     * and displays them in a paginated view. Only completed tasks are shown.
+     *
+     * @return \Illuminate\View\View The view displaying the user's completed tasks history.
      */
     public function viewHistory()
     {
@@ -160,14 +174,20 @@ class TaskController extends Controller
         return view('pages.tasks.history', compact('completedTasks'));
     }
 
+    /**
+     * Display tasks completed by students.
+     *
+     * This method retrieves tasks that have been marked as completed by students.
+     * It includes the students' names for each task and displays them in a paginated view.
+     *
+     * @return \Illuminate\View\View The view displaying the list of tasks completed by students.
+     */
     public function completedByStudents()
     {
         $tasks = Task::with(['completedStudents' => function($query) {
             $query->select('users.id', 'users.last_name', 'users.first_name');
         }])->paginate(6);
         
-        
-
         return view('pages.tasks.completed-by-students', compact('tasks'));
     }
 

@@ -24,9 +24,10 @@
                 </ul>
             </div>
             @empty
-                <div class="text-center py-12">
-                    <p class="text-gray-500 text-lg">Aucune tâche terminée pour le moment.</p>
-                </div>
+            <div class="w-full text-center">
+                <img src="{{ asset('images/addTask.svg') }}" alt="Aucune tâche" class="mx-auto w-1/2">
+                    <p class="text-gray-500 mt-4">Aucune tâche n'est terminée pour le moment.</p>
+            </div>
             @endforelse
             <div class="pt-5 px-4">
                 {{ $tasks->links() }}

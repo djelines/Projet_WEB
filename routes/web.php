@@ -59,17 +59,18 @@ Route::middleware('auth')->group(function () {
             Route::resource('tasks', TaskController::class)->except(['index', 'show']);
         });
 
+        // History Task Completed 
         Route::get('/tasks/completed-by-students', [TaskController::class, 'completedByStudents'])
-    ->name('tasks.completedByStudents');
+        ->name('tasks.completedByStudents');
 
-        // Historique
+        // History
         Route::get('/tasks/history', [TaskController::class, 'viewHistory'])->name('tasks.history');
 
-        // Accès aux tâches visibles à tous (mais actions limitées en fonction du rôle)
+        // Access to tasks visible to all (but actions limited according to role)
         Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
         Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 
-        // Pointer une tâche
+        // Point to a task
         Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])
             ->middleware('can:point,App\Models\Task')
             ->name('tasks.complete');

@@ -64,26 +64,51 @@ class TaskPolicy
         return false;
     }
 
+    /**
+     * Determine if the user has the required role to manage the model.
+     *
+     * @param User $user
+     * @return bool
+     */
     public function manage(User $user)
     {
         return $user->school()->pivot->role === 'admin';
     }
 
+    /**
+     * Determine if the user is allowed to point tasks.
+     *
+     * @param User $user
+     * @return bool
+     */
     public function point(User $user)
     {
         return $user->school()->pivot->role === 'student';
     }
 
+    /**
+     * Determine if the user is authorized to view historical task data.
+     *
+     * @param User $user
+     * @param Task|null $task
+     * @return bool
+     */
     public function viewHistory(User $user, Task $task = null)
     {
         return $user->school()->pivot->role === 'student';
     }
 
-    
+    /**
+     * Determine if the user is authorized to view tasks completed by students.
+     *
+     * @param User $user
+     * @return bool
+     */
     public function viewCompletedByStudents(User $user)
     {
         return $user->school()->pivot->role === 'admin';
     }
+
 
 
 

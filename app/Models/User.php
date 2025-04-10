@@ -70,9 +70,6 @@ class User extends Authenticatable
 
     /**
      * Retrieve the school of the user
-     */
-
-    /**
      * @return (Model&object)|null
      */
     public function school() {
@@ -82,7 +79,9 @@ class User extends Authenticatable
             ->first();
     }
 
-    // Relation Many-to-Many with tasks
+    /**
+     * Relation Many-to-Many with tasks
+     */ 
     public function tasks()
     {
         return $this->belongsToMany(Task::class, 'task_user')
