@@ -88,4 +88,13 @@ class User extends Authenticatable
                     ->withPivot('completed', 'comment')
                     ->withTimestamps();
     }
+
+    /**
+     * Relation One-to-Many avec assessments (évaluations)
+     */
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class);
+    }
+
 }

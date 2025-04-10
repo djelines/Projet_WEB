@@ -19,7 +19,7 @@
 
             </div>
             <!-- Button for sorting by date (toggle ascending/descending) -->
-            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mb-4 gap-4">
+            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mt-6 mb-4 gap-4">
                 <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
                 <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
                     Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})

@@ -16,12 +16,12 @@
         </div>
         <div class="flex justify-end mb-4 gap-4">
             <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
-            class="inline-block bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+            class="inline-block !bg-pink-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
                 Trier par date 
             </a>
 
             <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'id']) }}"
-            class="inline-block bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 text-white font-semibold px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+            class="inline-block !bg-teal-500 !text-white  text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
                 Trier par ID 
             </a>
         </div>
@@ -51,6 +51,9 @@
                         <p><span class="font-medium text-gray-600">Langages :</span> {{ implode(', ', $assessment->languages) }}</p>
                         <p><span class="font-medium text-gray-600">Questions :</span> {{ $assessment->num_questions }}</p>
                         <p><span class="font-medium text-gray-600">Créé le :</span> {{ $assessment->created_at->format('d/m/Y H:i') }}</p>
+                        <p><span class="font-medium text-gray-600">Créé par :</span> {{ $assessment->user ? $assessment->user->first_name : ' ' }} {{ $assessment->user ? $assessment->user->last_name : ' ' }}</p>
+
+
                     </div>
 
                     <!-- Actions -->
@@ -72,6 +75,9 @@
             @endforeach
         </div>
 
+        <div class="pt-5 px-4">
+                {{ $assessments->links() }}
+            </div>
         
     </div>
 </x-app-layout>

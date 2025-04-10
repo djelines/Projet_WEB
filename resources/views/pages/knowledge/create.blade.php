@@ -36,7 +36,7 @@
                 <label for="num_questions" class="block text-base font-semibold text-gray-800">Nombre de questions</label>
                 <input type="number" name="num_questions" id="num_questions"
                     class="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200"
-                    value="{{ old('num_questions') }}" min="1" max="20" placeholder="Ex : 10">
+                    value="{{ old('num_questions') }}" min="2" max="20" placeholder="Ex : 10">
                 @error('num_questions')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror

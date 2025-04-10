@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Assessment;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class KnowledgeController extends Controller
 {
@@ -23,12 +24,10 @@ class KnowledgeController extends Controller
         $sortBy = $request->get('sort_by', 'created_at'); // tri par défaut sur created_at
 
         // Applique le tri sur le bon champ
-        $assessments = Assessment::orderBy($sortBy, $order)->get();
+        $assessments = Assessment::orderBy($sortBy, $order)->paginate(6);
 
         return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
     }
-
-
 
 
     /**
@@ -62,9 +61,12 @@ class KnowledgeController extends Controller
             'languages' => $validated['languages'],
             'num_questions' => $validated['num_questions'],
             'difficulty' => $validated['difficulty'],
-            'questions' => $qcm,
-            
+            'questions' => json_encode($qcm), // Assure-toi que 'questions' est stocké sous forme de JSON
+            'user_id' => Auth::id(), // Ajoute l'ID de l'utilisateur connecté
         ]);
+        
+        //dd($assessment); 
+        
 
         return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
     }

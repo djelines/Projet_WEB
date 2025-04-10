@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Assessment extends Model
 {
     protected $fillable = [
-        'questions', 'languages', 'difficulty', 'num_questions'
+        'questions', 'languages', 'difficulty', 'num_questions', 'user_id'
     ];
 
     protected $casts = [
@@ -15,4 +15,15 @@ class Assessment extends Model
         'languages' => 'array',
         
     ];
+
+    
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+
 }
+
+
