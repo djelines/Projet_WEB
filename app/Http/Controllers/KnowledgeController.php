@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use App\Models\Assessment;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class KnowledgeController extends Controller
 {
@@ -17,11 +18,6 @@ class KnowledgeController extends Controller
     public function index(Request $request)
     {
         $assessments = Assessment::query();
-
-        // Filtrer en fonction de la présence du paramètre 'show_brouillons'
-        if ($request->input('show_brouillons') === 'false') {
-            $assessments = $assessments->where('brouillon', false);
-        }
 
         $assessments = $assessments->latest()->get(); // Récupère les bilans filtrés
 

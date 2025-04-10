@@ -19,4 +19,5 @@
             <p>Aucune question générée.</p>
         @endif
     </div>
+    <a href="{{ route('knowledge.index') }}" class="btn btn-primary">Retour à la page </a>
 </x-app-layout>

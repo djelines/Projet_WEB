@@ -45,5 +45,6 @@
             <!-- Bouton -->
             <button type="submit" class="btn btn-primary">Générer le bilan</button>
         </form>
+        <a href="{{ route('knowledge.index') }}" class="btn btn-primary">Retour</a>
     </div>
 </x-app-layout>
