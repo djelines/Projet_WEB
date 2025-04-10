@@ -27,4 +27,11 @@ class Task extends Model
                     ->withPivot('completed', 'comment')
                     ->withTimestamps();
     }
+
+    public function completedStudents()
+    {
+        return $this->belongsToMany(User::class, 'task_user')
+                    ->withPivot('completed', 'comment')
+                    ->wherePivot('completed', true);
+    }
 }

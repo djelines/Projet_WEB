@@ -75,9 +75,16 @@ class TaskPolicy
     }
 
     public function viewHistory(User $user, Task $task = null)
-{
-    return $user->school()->pivot->role === 'student';
-}
+    {
+        return $user->school()->pivot->role === 'student';
+    }
+
+    
+    public function viewCompletedByStudents(User $user)
+    {
+        return $user->school()->pivot->role === 'admin';
+    }
+
 
 
 }

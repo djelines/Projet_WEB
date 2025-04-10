@@ -160,5 +160,18 @@ class TaskController extends Controller
         return view('pages.tasks.history', compact('completedTasks'));
     }
 
+    public function completedByStudents()
+    {
+        $tasks = Task::with(['completedStudents' => function($query) {
+            $query->select('users.id', 'users.last_name', 'users.first_name');
+        }])->paginate(6);
+        
+        
+
+        return view('pages.tasks.completed-by-students', compact('tasks'));
+    }
+
+
+
 
 }

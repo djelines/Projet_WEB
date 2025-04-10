@@ -27,6 +27,12 @@
                 @can('viewHistory', App\Models\Task::class)
                     <a href="{{ route('tasks.history') }}" class="bg-violet-500 hover:bg-violet-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">Voir mon historique</a>
                 @endcan
+                @can('viewCompletedByStudents', App\Models\Task::class)
+                    <a href="{{ route('tasks.completedByStudents') }}" class="bg-green-500 hover:!bg-green-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
+                        Voir les élèves ayant complété les tâches
+                    </a>
+                @endcan
+
 
             </form>
 

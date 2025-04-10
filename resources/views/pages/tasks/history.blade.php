@@ -36,9 +36,11 @@
                     </div>
                 </div>
             @empty
-                <div class="text-center py-12">
-                    <p class="text-gray-500 text-lg">Aucune tâche terminée pour le moment.</p>
-                </div>
+            <div class="w-full text-center mt-4">
+                    <img src="{{ asset('images/uncompletedTask.svg') }}" alt="Aucune tâche" class="mx-auto w-1/3">
+
+                        <p class="text-gray-500 mt-4">Il n'y a pas encore de tâches terminées.</p>
+                    </div>
             @endforelse
 
             <div class="mt-4">

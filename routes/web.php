@@ -59,6 +59,9 @@ Route::middleware('auth')->group(function () {
             Route::resource('tasks', TaskController::class)->except(['index', 'show']);
         });
 
+        Route::get('/tasks/completed-by-students', [TaskController::class, 'completedByStudents'])
+    ->name('tasks.completedByStudents');
+
         // Historique
         Route::get('/tasks/history', [TaskController::class, 'viewHistory'])->name('tasks.history');
 
@@ -70,6 +73,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])
             ->middleware('can:point,App\Models\Task')
             ->name('tasks.complete');
+
+        
+       
 
     });
 
