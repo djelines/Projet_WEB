@@ -42,7 +42,7 @@ class KnowledgeController extends Controller
             'languages' => 'required|array|min:1',
             'num_questions' => 'required|integer|min:1|max:20',
             'difficulty' => 'required|string|in:débutant,intermédiaire,expert',
-            'brouillon' => 'nullable|boolean', // Validation du champ brouillon
+            
         ]);
 
         $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['difficulty']);
@@ -56,7 +56,7 @@ class KnowledgeController extends Controller
             'num_questions' => $validated['num_questions'],
             'difficulty' => $validated['difficulty'],
             'questions' => $qcm,
-            'brouillon' => $request->has('brouillon'), // Enregistre la valeur de brouillon
+            
         ]);
 
         return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
@@ -68,8 +68,14 @@ class KnowledgeController extends Controller
     public function show($id)
     {
         $assessment = Assessment::findOrFail($id);
-        return view('pages.knowledge.show', compact('assessment'));
+        
+        $qcm = is_string($assessment->questions)
+            ? json_decode($assessment->questions, true)
+            : $assessment->questions;
+
+        return view('pages.knowledge.show', compact('assessment', 'qcm'));
     }
+
 
     /**
      * Supprime un bilan
