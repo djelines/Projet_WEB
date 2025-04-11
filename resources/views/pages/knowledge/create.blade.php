@@ -56,6 +56,14 @@
                 @enderror
             </div>
 
+            <!-- Choix de la promo -->
+            <label for="cohort_id">Promo concernée</label>
+            <select name="cohort_id" id="cohort_id" required>
+                @foreach ($cohorts as $cohort)
+                    <option value="{{ $cohort->id }}">{{ $cohort->name }}</option>
+                @endforeach
+            </select>
+
             <!-- Boutons -->
             <div class="flex justify-end items-center gap-4 pt-4">
                 <a href="{{ route('knowledge.index') }}"

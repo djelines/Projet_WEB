@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Assessment extends Model
 {
     protected $fillable = [
-        'questions', 'languages', 'difficulty', 'num_questions', 'user_id'
+        'questions', 'languages', 'difficulty', 'num_questions', 'user_id', 'cohort_id'
     ];
 
     protected $casts = [
@@ -22,6 +22,12 @@ class Assessment extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function cohort()
+    {
+        return $this->belongsTo(Cohort::class);
+    }
+
 
 
 }

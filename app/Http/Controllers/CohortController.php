@@ -15,8 +15,37 @@ class CohortController extends Controller
      * @return Factory|View|Application|object
      */
     public function index() {
-        return view('pages.cohorts.index');
+
+        $cohorts = Cohort::all();
+
+        return view('pages.cohorts.index', [
+            'cohorts' => $cohorts
+        ]);
     }
+
+    public function create()
+    {
+        $cohorts = Cohort::all();
+        return view('assessments.create', compact('cohorts'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'languages' => 'required|string',
+            'difficulty' => 'required|string',
+            'num_questions' => 'required|integer',
+            'cohort_id' => 'required|exists:cohorts,id',
+            // autres validations...
+        ]);
+
+        $assessment = new Assessment($validated);
+        $assessment->user_id = auth()->id();
+        $assessment->save();
+
+        return redirect()->route('assessments.index');
+    }
+
 
 
     /**

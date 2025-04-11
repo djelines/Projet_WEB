@@ -57,6 +57,7 @@
                             <p><span class="font-medium text-gray-600">Questions :</span> {{ $assessment->num_questions }}</p>
                             <p><span class="font-medium text-gray-600">Créé le :</span> {{ $assessment->created_at->format('d/m/Y H:i') }}</p>
                             <p><span class="font-medium text-gray-600">Créé par :</span> {{ $assessment->user ? $assessment->user->first_name : ' ' }} {{ $assessment->user ? $assessment->user->last_name : ' ' }}</p>
+                            <p><span class="font-medium text-gray-600">Pour :</span> {{ $assessment->cohort?->name ?? 'Non attribuée' }}</p>
                         </div>
 
                         <!-- Actions -->

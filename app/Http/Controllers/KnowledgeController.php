@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use \App\Models\AssessmentResult; 
+use App\Models\Cohort;
+
 
 class KnowledgeController extends Controller
 {
@@ -36,8 +38,10 @@ class KnowledgeController extends Controller
      */
     public function create()
     {
-        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C#'];
-        return view('pages.knowledge.create', compact('languages'));
+        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C++']; // ou ce que tu utilises
+        $cohorts = Cohort::all();
+
+        return view('pages.knowledge.create', compact('languages', 'cohorts'));
     }
 
     /**
@@ -49,6 +53,7 @@ class KnowledgeController extends Controller
             'languages' => 'required|array|min:1',
             'num_questions' => 'required|integer|min:1|max:20',
             'difficulty' => 'required|string|in:débutant,intermédiaire,expert',
+            'cohort_id' => 'required|exists:cohorts,id',
             
         ]);
 
@@ -64,6 +69,7 @@ class KnowledgeController extends Controller
             'difficulty' => $validated['difficulty'],
             'questions' => json_encode($qcm), // Assure-toi que 'questions' est stocké sous forme de JSON
             'user_id' => Auth::id(), // Ajoute l'ID de l'utilisateur connecté
+            'cohort_id'     => $request->cohort_id,
         ]);
         
         //dd($assessment); 
