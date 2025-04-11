@@ -41,13 +41,19 @@ Route::middleware('auth')->group(function () {
 
         // Route pour afficher le formulaire de création de bilan
         Route::get('/knowledge', [KnowledgeController::class, 'index'])->name('knowledge.index');
-    Route::get('/knowledge/create', [KnowledgeController::class, 'create'])->name('knowledge.create');
-    Route::post('/knowledge/store', [KnowledgeController::class, 'store'])->name('knowledge.store');
-    Route::get('/knowledge/{id}', [KnowledgeController::class, 'show'])->name('knowledge.show');
-    Route::delete('/knowledge/{id}', [KnowledgeController::class, 'destroy'])->name('knowledge.destroy');
+        Route::get('/knowledge/create', [KnowledgeController::class, 'create'])->name('knowledge.create');
+        Route::post('/knowledge/store', [KnowledgeController::class, 'store'])->name('knowledge.store');
+        Route::get('/knowledge/{id}', [KnowledgeController::class, 'show'])->name('knowledge.show');
+        Route::delete('/knowledge/{id}', [KnowledgeController::class, 'destroy'])->name('knowledge.destroy');
+        Route::post('/knowledge/{assessment}/submit', [KnowledgeController::class, 'submit'])->name('knowledge.submit');
+        Route::get('/knowledge/result/{id}', [KnowledgeController::class, 'result'])->name('knowledge.result');
+        Route::get('/knowledge/{assessment}/history', [KnowledgeController::class, 'history'])
+            ->name('knowledge.history'); 
+            Route::get('/knowledge/result/{id}', [KnowledgeController::class, 'result'])->name('knowledge.result');
 
 
-                
+
+
         // Groups
         Route::get('groups', [GroupController::class, 'index'])->name('group.index');
 

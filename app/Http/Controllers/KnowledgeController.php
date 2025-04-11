@@ -10,6 +10,7 @@ use App\Models\Assessment;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use \App\Models\AssessmentResult; 
 
 class KnowledgeController extends Controller
 {
@@ -130,4 +131,81 @@ class KnowledgeController extends Controller
 
         return ['error' => 'Erreur lors de la génération du QCM.'];
     }
+
+    public function submit(Request $request, $id)
+{
+    $assessment = Assessment::findOrFail($id);
+    $user = Auth::user();
+
+    // Décoder les questions stockées en JSON (si elles sont stockées sous forme de chaîne JSON)
+    $qcm = is_string($assessment->questions) ? json_decode($assessment->questions, true) : $assessment->questions;
+
+    // Récupérer les réponses de l'utilisateur
+    $userAnswers = $request->input('answers', []);
+    $score = 0;
+
+    foreach ($qcm as $index => $question) {
+        if (isset($userAnswers[$index]) && $userAnswers[$index] === $question['correct_answer']) {
+            $score++;
+        }
+    }
+
+    // Enregistrer les résultats
+    $result = AssessmentResult::create([
+        'assessment_id' => $assessment->id,
+        'user_id' => $user->id,
+        'answers' => $userAnswers,
+        'score' => $score,
+    ]);
+
+    // Passer la variable $assessment et $qcm à la vue
+    return view('pages.knowledge.result', [
+        'assessment' => $assessment,
+        'score' => $score,
+        'userAnswers' => $userAnswers,
+        'qcm' => $qcm,  // Ajouter les questions décodées
+    ]);
+}
+
+
+
+    public function result($id)
+{
+    $result = AssessmentResult::with('assessment')->findOrFail($id);
+
+    $qcm = is_string($result->assessment->questions)
+        ? json_decode($result->assessment->questions, true)
+        : $result->assessment->questions;
+
+    return view('pages.knowledge.result', [
+        'assessment' => $result->assessment,
+        'score' => $result->score,
+        'userAnswers' => $result->answers,
+        'qcm' => $qcm,
+    ]);
+}
+
+
+    public function history($id)
+{
+    $assessment = Assessment::findOrFail($id);
+
+    // Protection admin : optionnel si tu as une policy
+    if (auth()->user()->school()->pivot->role !== 'admin') {
+        abort(403);
+    }
+
+    $results = AssessmentResult::with('user')
+        ->where('assessment_id', $assessment->id)
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('pages.knowledge.history', [
+        'assessment' => $assessment,
+        'results' => $results,
+    ]);
+}
+
+
+
 }

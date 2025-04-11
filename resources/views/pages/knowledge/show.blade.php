@@ -38,6 +38,15 @@
     </div>
 
     <hr>
+    @auth
+    @if (auth()->user()->school()->pivot->role === 'admin')
+        <a href="{{ route('knowledge.history', $assessment->id) }}"
+           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+           Voir l'historique des résultats
+        </a>
+    @endif
+@endauth
+
 
     <!-- Section : Liste des questions QCM -->
     <div class="bg-white shadow-md rounded-xl p-6">
@@ -74,6 +83,37 @@
             <p class="text-gray-600 italic">Aucune question générée.</p>
         @endif
     </div>
+
+    <form action="{{ route('knowledge.submit', $assessment->id) }}" method="POST" class="bg-white px-6 rounded-md shadow-md mx-auto">
+    @csrf
+
+    @foreach ($qcm as $index => $question)
+        <div class="p-4 rounded-lg border border-purple-200 bg-sky-50 mb-6">
+            <!-- Texte de la question -->
+            <p class="font-semibold text-gray-800 mb-3">
+                <strong>Q{{ $index + 1 }} : </strong> {{ $question['question'] }}
+            </p>
+
+            <!-- Liste des choix possibles -->
+            <ul class="space-y-2 text-gray-700 pl-4">
+                @foreach ($question['choices'] as $choiceIndex => $choice)
+                    <li>
+                        <label class="flex items-center  gap-3">
+                            <input type="radio" name="answers[{{ $index }}]" value="{{ $choice }}" required class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span class="text-sm">{{ $choice }}</span>
+                        </label>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endforeach
+
+    <div class="text-center">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+            Soumettre
+        </button>
+    </div>
+</form>
 
     <!-- Bouton pour retourner à la page précédente -->
     <div class="mt-8">

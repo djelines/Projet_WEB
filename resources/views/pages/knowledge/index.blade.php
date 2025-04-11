@@ -13,6 +13,7 @@
             <a href="{{ route('knowledge.create') }}" class="bg-fuchsia-800 hover:bg-fuchsia-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
                 Créer un nouveau bilan
             </a>
+            
         </div>
         <div class="flex justify-end mb-4 gap-4">
             <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
@@ -58,10 +59,17 @@
 
                     <!-- Actions -->
                     <div class="flex justify-center gap-3 mt-2 mb-4 px-6">
+                        <!-- Voir le QCM -->
                         <a href="{{ route('knowledge.show', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
                             Voir le QCM
                         </a>
 
+                        <!-- Faire le QCM -->
+                        <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                            Faire le QCM
+                        </a>
+
+                        <!-- Supprimer -->
                         <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" onsubmit="return confirm('Supprimer ce bilan ?')">
                             @csrf
                             @method('DELETE')
@@ -70,6 +78,7 @@
                             </button>
                         </form>
                     </div>
+
 
                 </div>
             @endforeach

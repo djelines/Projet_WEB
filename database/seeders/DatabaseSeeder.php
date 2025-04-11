@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\School;
 use App\Models\User;
+use App\Models\Task;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserSchool;
 use Illuminate\Database\Seeder;
@@ -64,5 +65,8 @@ class DatabaseSeeder extends Seeder
             'school_id' => $school->id,
             'role'      => 'student'
         ]);
+
+        // Create Task
+        Task::factory()->count(10)->create();
     }
 }
