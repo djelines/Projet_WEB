@@ -102,7 +102,9 @@ class KnowledgeController extends Controller
      */
     private function generateQCM(array $languages, int $numQuestions, string $difficulty)
     {
-        $prompt = "Je veux générer un QCM de niveau $difficulty pour évaluer des étudiants sur les langages suivants : " . implode(', ', $languages) . ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. La réponse doit être au format JSON uniquement. Chaque question doit contenir :
+        $prompt = "Je veux générer un QCM de niveau $difficulty pour évaluer des étudiants sur les langages suivants : " . implode(', ', $languages) . ". 
+        Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. 
+        La réponse doit être au format JSON uniquement. Chaque question doit contenir :
         - \"question\" : le texte de la question
         - \"choices\" : un tableau de choix
         - \"correct_answer\" : la bonne réponse.";
