@@ -48,47 +48,65 @@ class KnowledgeController extends Controller
      * Gère la soumission du formulaire pour créer un bilan
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'languages' => 'required|array|min:1',
-            'num_questions' => 'required|integer|min:1|max:20',
-            'cohort_id' => 'required|exists:cohorts,id',
-            'num_answers' => 'required|integer|min:2|max:6', // Nombre de réponses par question
-        ]);
+{
+    $validated = $request->validate([
+        'languages' => 'required|array|min:1',
+        'num_questions' => 'required|integer|min:1|max:20',
+        'cohort_id' => 'required|exists:cohorts,id',
+        'num_answers' => 'required|integer|min:2|max:6',
+    ]);
 
-        // Générer le QCM
-        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['num_answers']);
+    $cohort = Cohort::findOrFail($validated['cohort_id']);
 
-        if (isset($qcm['error'])) {
-            return back()->with('error', $qcm['error']);
-        }
-
-        // Créer l'évaluation sans le champ "difficulty"
-        $assessment = Assessment::create([
-            'languages' => $validated['languages'],
-            'num_questions' => $validated['num_questions'],
-            'questions' => json_encode($qcm), // Stocker les questions en JSON
-            'user_id' => Auth::id(),
-            'cohort_id' => $request->cohort_id,
-        ]);
-
-        return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
+    // Vérifier si l'utilisateur appartient à cette cohorte
+    if (!Auth::user()->cohorts->contains($cohort)) {
+        return back()->with('error', 'Vous ne faites pas partie de cette cohorte.');
     }
+
+    // Générer le QCM
+    $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['num_answers']);
+
+    if (isset($qcm['error'])) {
+        return back()->with('error', $qcm['error']);
+    }
+
+    // Créer l'évaluation sans le champ "difficulty"
+    $assessment = Assessment::create([
+        'languages' => $validated['languages'],
+        'num_questions' => $validated['num_questions'],
+        'questions' => json_encode($qcm),
+        'user_id' => Auth::id(),
+        'cohort_id' => $validated['cohort_id'],
+    ]);
+
+    return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
+}
+
 
 
     /**
      * Affiche un bilan spécifique
      */
+    // Afficher uniquement les évaluations assignées à l'étudiant
     public function show($id)
     {
         $assessment = Assessment::findOrFail($id);
-        
+
+        // Vérifie si l'étudiant appartient à la même cohorte que celle de l'évaluation
+        $cohort = $assessment->cohort;
+
+        if (!$cohort || !$cohort->users->contains(Auth::user())) {
+            abort(403, 'Vous n\'êtes pas autorisé à accéder à ce bilan.');
+        }
+
         $qcm = is_string($assessment->questions)
             ? json_decode($assessment->questions, true)
             : $assessment->questions;
 
         return view('pages.knowledge.show', compact('assessment', 'qcm'));
     }
+
+
 
 
     /**
@@ -150,57 +168,67 @@ class KnowledgeController extends Controller
     }
 
     public function submit(Request $request, $id)
-{
-    $assessment = Assessment::findOrFail($id);
-    $user = Auth::user();
+    {
+        $assessment = Assessment::findOrFail($id);
+        $user = Auth::user();
 
-    // Décoder les questions stockées en JSON (si elles sont stockées sous forme de chaîne JSON)
-    $qcm = is_string($assessment->questions) ? json_decode($assessment->questions, true) : $assessment->questions;
+        // Vérifier si l'étudiant a déjà répondu à ce bilan
+        $existingResult = AssessmentResult::where('assessment_id', $assessment->id)
+                                        ->where('user_id', $user->id)
+                                        ->first();
 
-    // Récupérer les réponses de l'utilisateur
-    $userAnswers = $request->input('answers', []);
-    $score = 0;
-
-    foreach ($qcm as $index => $question) {
-        if (isset($userAnswers[$index]) && $userAnswers[$index] === $question['correct_answer']) {
-            $score++;
+        if ($existingResult) {
+            return redirect()->route('knowledge.result', $existingResult->id)
+                            ->with('error', 'Vous avez déjà répondu à ce bilan.');
         }
+
+        // Si non, on poursuit le traitement
+        $qcm = is_string($assessment->questions) ? json_decode($assessment->questions, true) : $assessment->questions;
+        $userAnswers = $request->input('answers', []);
+        $score = 0;
+
+        foreach ($qcm as $index => $question) {
+            if (isset($userAnswers[$index]) && $userAnswers[$index] === $question['correct_answer']) {
+                $score++;
+            }
+        }
+
+        // Enregistrer les résultats
+        $result = AssessmentResult::create([
+            'assessment_id' => $assessment->id,
+            'user_id' => $user->id,
+            'answers' => $userAnswers,
+            'score' => $score,
+        ]);
+
+        // Passer à la vue des résultats
+        return redirect()->route('knowledge.result', $result->id);
     }
 
-    // Enregistrer les résultats
-    $result = AssessmentResult::create([
-        'assessment_id' => $assessment->id,
-        'user_id' => $user->id,
-        'answers' => $userAnswers,
-        'score' => $score,
-    ]);
-
-    // Passer la variable $assessment et $qcm à la vue
-    return view('pages.knowledge.result', [
-        'assessment' => $assessment,
-        'score' => $score,
-        'userAnswers' => $userAnswers,
-        'qcm' => $qcm,  // Ajouter les questions décodées
-    ]);
-}
 
 
 
     public function result($id)
-{
-    $result = AssessmentResult::with('assessment')->findOrFail($id);
+    {
+        $result = AssessmentResult::with('assessment')->findOrFail($id);
 
-    $qcm = is_string($result->assessment->questions)
-        ? json_decode($result->assessment->questions, true)
-        : $result->assessment->questions;
+        // Vérification que l'utilisateur est celui qui a passé l'évaluation
+        if ($result->user_id !== Auth::id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à voir ce résultat.');
+        }
 
-    return view('pages.knowledge.result', [
-        'assessment' => $result->assessment,
-        'score' => $result->score,
-        'userAnswers' => $result->answers,
-        'qcm' => $qcm,
-    ]);
-}
+        $qcm = is_string($result->assessment->questions)
+            ? json_decode($result->assessment->questions, true)
+            : $result->assessment->questions;
+
+        return view('pages.knowledge.result', [
+            'assessment' => $result->assessment,
+            'score' => $result->score,
+            'userAnswers' => $result->answers,
+            'qcm' => $qcm,
+        ]);
+    }
+
 
 
     public function history($id)
