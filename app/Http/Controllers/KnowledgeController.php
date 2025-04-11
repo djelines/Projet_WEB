@@ -52,31 +52,29 @@ class KnowledgeController extends Controller
         $validated = $request->validate([
             'languages' => 'required|array|min:1',
             'num_questions' => 'required|integer|min:1|max:20',
-            'difficulty' => 'required|string|in:débutant,intermédiaire,expert',
             'cohort_id' => 'required|exists:cohorts,id',
-            
+            'num_answers' => 'required|integer|min:2|max:6', // Nombre de réponses par question
         ]);
 
-        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['difficulty']);
+        // Générer le QCM
+        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['num_answers']);
 
         if (isset($qcm['error'])) {
             return back()->with('error', $qcm['error']);
         }
 
+        // Créer l'évaluation sans le champ "difficulty"
         $assessment = Assessment::create([
             'languages' => $validated['languages'],
             'num_questions' => $validated['num_questions'],
-            'difficulty' => $validated['difficulty'],
-            'questions' => json_encode($qcm), // Assure-toi que 'questions' est stocké sous forme de JSON
-            'user_id' => Auth::id(), // Ajoute l'ID de l'utilisateur connecté
-            'cohort_id'     => $request->cohort_id,
+            'questions' => json_encode($qcm), // Stocker les questions en JSON
+            'user_id' => Auth::id(),
+            'cohort_id' => $request->cohort_id,
         ]);
-        
-        //dd($assessment); 
-        
 
         return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
     }
+
 
     /**
      * Affiche un bilan spécifique
@@ -106,15 +104,27 @@ class KnowledgeController extends Controller
     /**
      * Génère un QCM avec Gemini
      */
-    private function generateQCM(array $languages, int $numQuestions, string $difficulty)
+    private function generateQCM(array $languages, int $numQuestions, int $numAnswers)
     {
-        $prompt = "Je veux générer un QCM de niveau $difficulty pour évaluer des étudiants sur les langages suivants : " . implode(', ', $languages) . ". 
-        Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. 
-        La réponse doit être au format JSON uniquement. Chaque question doit contenir :
+        // Déterminer les proportions de questions selon la difficulté
+        $easyCount = ceil($numQuestions * 0.30);
+        $mediumCount = ceil($numQuestions * 0.40);
+        $hardCount = $numQuestions - ($easyCount + $mediumCount);
+
+        // Préparer le prompt pour Gemini avec la nouvelle description
+        $prompt = "Je veux générer un QCM pour évaluer des étudiants sur les langages suivants : " . implode(', ', $languages) . ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. Chaque question doit comporter $numAnswers choix, dont une seule bonne réponse. La réponse doit être au format JSON uniquement. Voici la structure des questions :
         - \"question\" : le texte de la question
         - \"choices\" : un tableau de choix
-        - \"correct_answer\" : la bonne réponse.";
+        - \"correct_answer\" : la bonne réponse
 
+        Les questions doivent être équilibrées en termes de difficulté :
+        - $easyCount questions faciles
+        - $mediumCount questions moyennes
+        - $hardCount questions difficiles
+
+        Merci de générer le QCM selon ces spécifications.";
+        
+        // Envoi à l'IA pour générer les questions
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . config('services.gemini.api_key'), [
@@ -126,7 +136,6 @@ class KnowledgeController extends Controller
             if (isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
                 $questionsJson = trim($responseData['candidates'][0]['content']['parts'][0]['text']);
                 $questionsJson = preg_replace('/^```(json)?|```$/i', '', $questionsJson);
-                \Log::debug("JSON nettoyé : " . $questionsJson);
 
                 $questions = json_decode($questionsJson, true);
 

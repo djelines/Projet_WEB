@@ -42,27 +42,30 @@
                 @enderror
             </div>
 
-            <!-- Difficulté -->
+            <!-- Nombre de réponses par question -->
             <div class="space-y-2">
-                <label for="difficulty" class="block text-base font-semibold text-gray-800">Niveau de difficulté</label>
-                <select name="difficulty" id="difficulty"
-                    class="w-full px-4 py-3 border rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200">
-                    <option value="débutant">Débutant</option>
-                    <option value="intermédiaire">Intermédiaire</option>
-                    <option value="expert">Expert</option>
-                </select>
-                @error('difficulty')
+                <label for="num_answers" class="block text-base font-semibold text-gray-800">Nombre de réponses par question</label>
+                <input type="number" name="num_answers" id="num_answers"
+                    class="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200"
+                    value="{{ old('num_answers', 4) }}" min="2" max="6" placeholder="Ex : 4">
+                @error('num_answers')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <!-- Choix de la promo -->
-            <label for="cohort_id">Promo concernée</label>
-            <select name="cohort_id" id="cohort_id" required>
-                @foreach ($cohorts as $cohort)
-                    <option value="{{ $cohort->id }}">{{ $cohort->name }}</option>
-                @endforeach
-            </select>
+            <div class="space-y-2">
+                <label for="cohort_id" class="block text-base font-semibold text-gray-800">Promo concernée</label>
+                <select name="cohort_id" id="cohort_id" required
+                    class="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition duration-200">
+                    @foreach ($cohorts as $cohort)
+                        <option value="{{ $cohort->id }}">{{ $cohort->name }}</option>
+                    @endforeach
+                </select>
+                @error('cohort_id')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
             <!-- Boutons -->
             <div class="flex justify-end items-center gap-4 pt-4">

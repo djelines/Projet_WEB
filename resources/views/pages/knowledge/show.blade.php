@@ -13,28 +13,35 @@
         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 rounded-tl-sm rounded-tr-sm"></div>
 
         <!-- Titre de la section -->
-        <h2 class="text-xl font-semibold text-sky-900 mb-6 mt-2">Informations du bilan</h2>
+<h2 class="text-xl font-semibold text-sky-900 mb-6 mt-2">Informations du bilan</h2>
 
-        <!-- Cartes individuelles pour les détails du bilan -->
-        <div class="flex flex-wrap gap-4 text-gray-800 mt-2">
-            <!-- Langages évalués -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Langages</span>
-                <p class="text-sm">{{ implode(', ', $assessment->languages ?? []) }}</p>
-            </div>
+<!-- Cartes individuelles pour les détails du bilan -->
+<div class="flex flex-wrap gap-4 text-gray-800 mt-2">
+    <!-- Langages évalués -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Langages</span>
+        <p class="text-sm">{{ implode(', ', $assessment->languages ?? []) }}</p>
+    </div>
 
-            <!-- Niveau de difficulté -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Niveau</span>
-                <p class="text-sm">{{ ucfirst($assessment->difficulty) }}</p>
-            </div>
+    <!-- Nombre total de questions -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Nombre de questions</span>
+        <p class="text-sm">{{ $assessment->num_questions }}</p>
+    </div>
 
-            <!-- Nombre total de questions -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Nombre de questions</span>
-                <p class="text-sm">{{ $assessment->num_questions }}</p>
-            </div>
-        </div>
+    <!-- Promo concernée -->
+<div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 border rounded-md p-3 shadow-sm">
+    <span class="block text-sm font-semibold text-gray-600">Promo concernée</span>
+    <p class="text-sm">{{ $assessment->cohort->name }}</p>
+</div>
+<!-- Date de création -->
+<div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 border rounded-md p-3 shadow-sm">
+    <span class="block text-sm font-semibold text-gray-600">Date de création</span>
+    <p class="text-sm">{{ \Carbon\Carbon::parse($assessment->created_at)->format('d/m/Y H:i') }}</p>
+</div>
+
+</div>
+
     </div>
 
     <hr>
