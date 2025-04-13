@@ -11,9 +11,12 @@ use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use \App\Models\AssessmentResult; 
-use App\Models\Cohort;
-
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\Cohort;
+use App\Http\Requests\StoreAssessmentRequest;
+use App\Http\Requests\SubmitAssessmentRequest;
+use App\Http\Requests\IndexAssessmentRequest;
+
 
 
 
@@ -24,23 +27,23 @@ class KnowledgeController extends Controller
     /**
      * Affiche la page des bilans de compétence depuis la base de données.
      */
-    public function index(Request $request)
-{
-    $order = $request->get('sort', 'desc'); // Par défaut, tri du plus récent au plus ancien
-
-    // Vérifie si le tri est demandé par ID ou par date
-    $sortBy = $request->get('sort_by', 'created_at'); // tri par défaut sur created_at
+    public function index(IndexAssessmentRequest $request)
+    {
+        // Récupérer les paramètres validés
+        $order = $request->get('sort', 'desc');  // Par défaut, tri du plus récent au plus ancien
+        $sortBy = $request->get('sort_by', 'created_at');  // Tri par défaut sur created_at
+        
+        // Récupérer l'id de la cohorte de l'utilisateur connecté via la table pivot
+        $userCohortId = auth()->user()->cohorts()->first()->id;
     
-    // Récupérer l'id de la cohorte de l'utilisateur connecté via la table pivot
-    $userCohortId = auth()->user()->cohorts()->first()->id;
-
-    // Applique le tri et le filtre sur le bon champ et la cohorte de l'utilisateur connecté
-    $assessments = Assessment::where('cohort_id', $userCohortId)
-                            ->orderBy($sortBy, $order)
-                            ->paginate(6); // Utilisation de la pagination
-
-    return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
-}
+        // Applique le tri et le filtre sur le bon champ et la cohorte de l'utilisateur connecté
+        $assessments = Assessment::where('cohort_id', $userCohortId)
+                                ->orderBy($sortBy, $order)
+                                ->paginate(6);  // Utilisation de la pagination
+    
+        return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
+    }
+    
 
 
 
@@ -58,42 +61,37 @@ class KnowledgeController extends Controller
 
 
     /**
-     * Gère la soumission du formulaire pour créer un bilan
+     * Gère la soumission du formulaire pour créer un bilan 
      */
-    public function store(Request $request)
-{
-    $validated = $request->validate([
-        'languages' => 'required|array|min:1',
-        'num_questions' => 'required|integer|min:1|max:20',
-        'cohort_id' => 'required|exists:cohorts,id',
-        'num_answers' => 'required|integer|min:2|max:6',
-    ]);
+    public function store(StoreAssessmentRequest $request)
+    {
+        $validated = $request->validated();  // La validation est déjà faite à ce point
 
-    $cohort = Cohort::findOrFail($validated['cohort_id']);
+        $cohort = Cohort::findOrFail($validated['cohort_id']);
 
-    // Vérifier si l'utilisateur appartient à cette cohorte
-    if (!Auth::user()->cohorts->contains($cohort)) {
-        return back()->with('error', 'Vous ne faites pas partie de cette cohorte.');
+        // Vérifier si l'utilisateur appartient à cette cohorte
+        if (!Auth::user()->cohorts->contains($cohort)) {
+            return back()->with('error', 'Vous ne faites pas partie de cette cohorte.');
+        }
+
+        // Générer le QCM
+        $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['num_answers']);
+
+        if (isset($qcm['error'])) {
+            return back()->with('error', $qcm['error']);
+        }
+
+        // Créer l'évaluation sans le champ "difficulty"
+        $assessment = Assessment::create([
+            'languages' => $validated['languages'],
+            'num_questions' => $validated['num_questions'],
+            'questions' => json_encode($qcm),
+            'user_id' => Auth::id(),
+            'cohort_id' => $validated['cohort_id'],
+        ]);
+
+        return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
     }
-
-    // Générer le QCM
-    $qcm = $this->generateQCM($validated['languages'], $validated['num_questions'], $validated['num_answers']);
-
-    if (isset($qcm['error'])) {
-        return back()->with('error', $qcm['error']);
-    }
-
-    // Créer l'évaluation sans le champ "difficulty"
-    $assessment = Assessment::create([
-        'languages' => $validated['languages'],
-        'num_questions' => $validated['num_questions'],
-        'questions' => json_encode($qcm),
-        'user_id' => Auth::id(),
-        'cohort_id' => $validated['cohort_id'],
-    ]);
-
-    return view('pages.knowledge.show', ['qcm' => $qcm, 'assessment' => $assessment]);
-}
 
 
 
@@ -178,32 +176,33 @@ class KnowledgeController extends Controller
         return ['error' => 'Erreur lors de la génération du QCM.'];
     }
 
-    public function submit(Request $request, $id)
+
+    public function submit(SubmitAssessmentRequest $request, $id)
     {
         $assessment = Assessment::findOrFail($id);
         $user = Auth::user();
-
+    
         // Vérifier si l'étudiant a déjà répondu à ce bilan
         $existingResult = AssessmentResult::where('assessment_id', $assessment->id)
-                                        ->where('user_id', $user->id)
-                                        ->first();
-
+                                            ->where('user_id', $user->id)
+                                            ->first();
+    
         if ($existingResult) {
             return redirect()->route('knowledge.result', $existingResult->id)
-                            ->with('error', 'Vous avez déjà répondu à ce bilan.');
+                             ->with('error', 'Vous avez déjà répondu à ce bilan.');
         }
-
+    
         // Si non, on poursuit le traitement
         $qcm = is_string($assessment->questions) ? json_decode($assessment->questions, true) : $assessment->questions;
         $userAnswers = $request->input('answers', []);
         $score = 0;
-
+    
         foreach ($qcm as $index => $question) {
             if (isset($userAnswers[$index]) && $userAnswers[$index] === $question['correct_answer']) {
                 $score++;
             }
         }
-
+    
         // Enregistrer les résultats
         $result = AssessmentResult::create([
             'assessment_id' => $assessment->id,
@@ -211,10 +210,11 @@ class KnowledgeController extends Controller
             'answers' => $userAnswers,
             'score' => $score,
         ]);
-
+    
         // Passer à la vue des résultats
         return redirect()->route('knowledge.result', $result->id);
     }
+    
 
 
 

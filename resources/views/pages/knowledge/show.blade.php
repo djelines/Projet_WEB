@@ -48,7 +48,7 @@
     <!-- Section pour l'admin : Voir l'historique des résultats -->
     @can('view-history', $assessment)
         <a href="{{ route('knowledge.history', $assessment->id) }}"
-        class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        class="inline-block bg-blue-600 !text-white px-4 py-2 rounded hover:bg-blue-700 mt-3 content-end">
         Voir l'historique des résultats
         </a>
     @endcan
