@@ -67,6 +67,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create Task
-        Task::factory()->count(10)->create();
+        Task::factory()->count(16)->create();
     }
 }

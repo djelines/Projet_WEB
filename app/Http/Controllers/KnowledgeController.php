@@ -13,9 +13,16 @@ use Illuminate\Support\Facades\Auth;
 use \App\Models\AssessmentResult; 
 use App\Models\Cohort;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+
 
 class KnowledgeController extends Controller
 {
+
+    use AuthorizesRequests; 
+
+    
     /**
      * Affiche la page des bilans de compétence depuis la base de données.
      */
@@ -38,11 +45,13 @@ class KnowledgeController extends Controller
      */
     public function create()
     {
-        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C++']; // ou ce que tu utilises
+        $this->authorize('create', Assessment::class);
+        $languages = ['PHP', 'JavaScript', 'Python', 'Java', 'C++'];
         $cohorts = Cohort::all();
 
         return view('pages.knowledge.create', compact('languages', 'cohorts'));
     }
+
 
     /**
      * Gère la soumission du formulaire pour créer un bilan
@@ -91,13 +100,7 @@ class KnowledgeController extends Controller
     public function show($id)
     {
         $assessment = Assessment::findOrFail($id);
-
-        // Vérifie si l'étudiant appartient à la même cohorte que celle de l'évaluation
-        $cohort = $assessment->cohort;
-
-        if (!$cohort || !$cohort->users->contains(Auth::user())) {
-            abort(403, 'Vous n\'êtes pas autorisé à accéder à ce bilan.');
-        }
+        $this->authorize('view', $assessment);
 
         $qcm = is_string($assessment->questions)
             ? json_decode($assessment->questions, true)
@@ -109,15 +112,19 @@ class KnowledgeController extends Controller
 
 
 
+
     /**
      * Supprime un bilan
      */
     public function destroy($id)
     {
         $assessment = Assessment::findOrFail($id);
+        $this->authorize('delete', $assessment);
         $assessment->delete();
+
         return redirect()->route('knowledge.index')->with('success', 'Bilan supprimé avec succès');
     }
+
 
     /**
      * Génère un QCM avec Gemini
@@ -232,24 +239,18 @@ class KnowledgeController extends Controller
 
 
     public function history($id)
-{
-    $assessment = Assessment::findOrFail($id);
+    {
+        $assessment = Assessment::findOrFail($id);
+        $this->authorize('viewHistory', $assessment);
 
-    // Protection admin : optionnel si tu as une policy
-    if (auth()->user()->school()->pivot->role !== 'admin') {
-        abort(403);
+        $results = AssessmentResult::with('user')
+            ->where('assessment_id', $assessment->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('pages.knowledge.history', compact('assessment', 'results'));
     }
 
-    $results = AssessmentResult::with('user')
-        ->where('assessment_id', $assessment->id)
-        ->orderByDesc('created_at')
-        ->get();
-
-    return view('pages.knowledge.history', [
-        'assessment' => $assessment,
-        'results' => $results,
-    ]);
-}
 
 
 

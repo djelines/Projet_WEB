@@ -10,19 +10,22 @@
         <!-- Titre + bouton alignés -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-semibold text-gray-800">Liste des Bilans de Compétence</h1>
-            <a href="{{ route('knowledge.create') }}" class="bg-fuchsia-800 hover:bg-fuchsia-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
-                Créer un nouveau bilan
-            </a>
+            @can('create', \App\Models\Assessment::class)
+                <a href="{{ route('knowledge.create') }}" class="bg-fuchsia-800 hover:bg-fuchsia-900 px-4 py-2 rounded-lg !text-red-50 text-sm font-bold transition duration-300 ease-in-out transform hover:scale-105 uppercase">
+                    Créer un nouveau bilan
+                </a>
+            @endcan
         </div>
+
         <div class="flex justify-end mb-4 gap-4">
             <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
-            class="inline-block !bg-pink-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
-                Trier par date 
+               class="inline-block !bg-pink-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                Trier par date
             </a>
 
             <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'id']) }}"
-            class="inline-block !bg-teal-500 !text-white  text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
-                Trier par ID 
+               class="inline-block !bg-teal-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                Trier par ID
             </a>
         </div>
 
@@ -48,10 +51,10 @@
                     <div class="bg-white border-2 border-gray-200 shadow-md rounded-xl flex flex-col justify-between">
                         <!-- Bandeau coloré -->
                         <div class="w-full h-2 rounded-t bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 mb-4"></div>
-                        
+
                         <!-- Contenu -->
                         <h2 class="text-lg font-semibold text-sky-900 text-center">Bilan #{{ $assessment->id }}</h2>
-                       
+
                         <div class="text-gray-700 text-sm bg-gray-100 border space-y-2 py-3 text-center mt-3 mb-3">
                             <p><span class="font-medium text-gray-600">Langages :</span> {{ implode(', ', $assessment->languages) }}</p>
                             <p><span class="font-medium text-gray-600">Questions :</span> {{ $assessment->num_questions }}</p>
@@ -62,24 +65,27 @@
 
                         <!-- Actions -->
                         <div class="flex justify-center gap-3 mt-2 mb-4 px-6">
-                            <!-- Voir le QCM -->
-                            <a href="{{ route('knowledge.show', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                                Voir le QCM
-                            </a>
+                            @can('view', $assessment)
+                                <a href="{{ route('knowledge.show', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                                    Voir le QCM
+                                </a>
+                            @endcan
 
-                            <!-- Faire le QCM -->
-                            <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                                Faire le QCM
-                            </a>
+                            @can('answer', $assessment)
+                                <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                                    Faire le QCM
+                                </a>
+                            @endcan
 
-                            <!-- Supprimer -->
-                            <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" onsubmit="return confirm('Supprimer ce bilan ?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="!bg-red-800 !text-white px-4 py-2 rounded-md hover:!bg-red-900 text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                                    Supprimer
-                                </button>
-                            </form>
+                            @can('delete', $assessment)
+                                <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" onsubmit="return confirm('Supprimer ce bilan ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="!bg-red-800 !text-white px-4 py-2 rounded-md hover:!bg-red-900 text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            @endcan
                         </div>
                     </div>
                 @endforeach
@@ -89,6 +95,5 @@
         <div class="pt-5 px-4">
             {{ $assessments->links() }}
         </div>
-
     </div>
 </x-app-layout>
