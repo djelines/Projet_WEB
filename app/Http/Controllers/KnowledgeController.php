@@ -21,23 +21,27 @@ class KnowledgeController extends Controller
 {
 
     use AuthorizesRequests; 
-
-    
     /**
      * Affiche la page des bilans de compétence depuis la base de données.
      */
     public function index(Request $request)
-    {
-        $order = $request->get('sort', 'desc'); // Par défaut, tri du plus récent au plus ancien
+{
+    $order = $request->get('sort', 'desc'); // Par défaut, tri du plus récent au plus ancien
 
-        // Vérifie si le tri est demandé par ID ou par date
-        $sortBy = $request->get('sort_by', 'created_at'); // tri par défaut sur created_at
+    // Vérifie si le tri est demandé par ID ou par date
+    $sortBy = $request->get('sort_by', 'created_at'); // tri par défaut sur created_at
+    
+    // Récupérer l'id de la cohorte de l'utilisateur connecté via la table pivot
+    $userCohortId = auth()->user()->cohorts()->first()->id;
 
-        // Applique le tri sur le bon champ
-        $assessments = Assessment::orderBy($sortBy, $order)->paginate(6);
+    // Applique le tri et le filtre sur le bon champ et la cohorte de l'utilisateur connecté
+    $assessments = Assessment::where('cohort_id', $userCohortId)
+                            ->orderBy($sortBy, $order)
+                            ->paginate(6); // Utilisation de la pagination
 
-        return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
-    }
+    return view('pages.knowledge.index', compact('assessments', 'order', 'sortBy'));
+}
+
 
 
     /**
@@ -218,11 +222,6 @@ class KnowledgeController extends Controller
     public function result($id)
     {
         $result = AssessmentResult::with('assessment')->findOrFail($id);
-
-        // Vérification que l'utilisateur est celui qui a passé l'évaluation
-        if ($result->user_id !== Auth::id()) {
-            abort(403, 'Vous n\'êtes pas autorisé à voir ce résultat.');
-        }
 
         $qcm = is_string($result->assessment->questions)
             ? json_decode($result->assessment->questions, true)

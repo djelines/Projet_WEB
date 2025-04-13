@@ -67,11 +67,24 @@
                         <div class="flex justify-center gap-3 mt-2 mb-4 px-6">
                         @can('view', $assessment)
     @if(auth()->user()->school()->pivot->role === 'student')
-        <!-- Bouton pour l'étudiant -->
-        <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" 
-           class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-            Faire le QCM
-        </a>
+        <!-- Vérification si l'étudiant a déjà répondu au QCM -->
+        @php
+            $alreadyDone = \App\Models\AssessmentResult::where('assessment_id', $assessment->id)
+                                                      ->where('user_id', auth()->id())
+                                                      ->whereNotNull('score') // Vérifie si un score existe
+                                                      ->exists();
+        @endphp
+        
+        @if($alreadyDone)
+            <!-- Message "Déjà fait" si l'étudiant a déjà passé le QCM -->
+            <p class="text-green-700 font-semibold">Déjà fait</p>
+        @else
+            <!-- Bouton pour faire le QCM si ce n'est pas fait -->
+            <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" 
+               class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                Faire le QCM
+            </a>
+        @endif
     @else
         <!-- Bouton pour l'admin -->
         <a href="{{ route('knowledge.show', $assessment->id) }}" 
@@ -80,6 +93,7 @@
         </a>
     @endif
 @endcan
+
 
 
                             @can('delete', $assessment)
