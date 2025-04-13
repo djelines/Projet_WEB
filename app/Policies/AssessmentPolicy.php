@@ -22,7 +22,7 @@ class AssessmentPolicy
     public function view(User $user, Assessment $assessment)
     {
         // Vérifie si l'utilisateur fait partie de la cohorte associée au bilan
-        return $assessment->cohort->users->contains($user);
+        return $assessment->cohort->users->contains($user) ;
     }
 
 
@@ -71,6 +71,8 @@ class AssessmentPolicy
         return $user->school()->pivot->role === 'admin';
     }
 
+    
+
     public function submit(User $user, Assessment $assessment)
     {
         return $assessment->cohort->users->contains($user);
@@ -80,4 +82,15 @@ class AssessmentPolicy
     {
         return $assessment->cohort->users->contains($user);
     }
+
+    public function viewQcm(User $user, Assessment $assessment)
+    {
+        return $user->school()->pivot->role === 'admin';
+    }
+
+    public function answerQcm(User $user, Assessment $assessment)
+    {
+        return $user->school()->pivot->role === 'student';
+    }
+
 }

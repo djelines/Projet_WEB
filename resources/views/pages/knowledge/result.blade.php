@@ -71,7 +71,7 @@
             </div>
 
             <div class="mt-6 text-center">
-                <a href="{{ route('knowledge.history', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                <a href="{{ route('knowledge.index', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
                     Retour aux évaluations
                 </a>
             </div>

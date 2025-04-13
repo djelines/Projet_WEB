@@ -45,82 +45,72 @@
     </div>
 
     <hr>
-    @auth
-    @if (auth()->user()->school()->pivot->role === 'admin')
+    <!-- Section pour l'admin : Voir l'historique des résultats -->
+    @can('view-history', $assessment)
         <a href="{{ route('knowledge.history', $assessment->id) }}"
-           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-           Voir l'historique des résultats
+        class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Voir l'historique des résultats
         </a>
-    @endif
-@endauth
+    @endcan
+
 
 
     <!-- Section : Liste des questions QCM -->
     <div class="bg-white shadow-md rounded-xl p-6">
         <h2 class="text-xl font-semibold text-sky-900 mb-4">Questions du QCM</h2>
-
-        <!-- Vérification si des questions QCM sont présentes -->
-        @if(isset($qcm) && is_array($qcm) && !empty($qcm))
-            <div class="space-y-6">
-                @foreach($qcm as $index => $question)
-                    <!-- Carte individuelle de question -->
-                    <div class="p-4 rounded-lg border border-purple-200 bg-sky-50">
-                        <!-- Texte de la question -->
-                        <p class="font-semibold text-gray-800 mb-3">{{ $index + 1 }}. {{ $question['question'] }}</p>
-
-                        <!-- Liste des choix possibles -->
-                        <ul class="space-y-1 text-gray-700 pl-4">
-                            @foreach($question['choices'] as $choiceIndex => $choice)
-                                <li><span class="font-medium">{{ $choiceIndex + 1 }}.</span> {{ $choice }}</li>
-                            @endforeach
-                        </ul>
-
-                        <!-- Affichage de la bonne réponse -->
-                        <div class="mt-4 text-sm text-lime-800 font-semibold">
-                            Bonne réponse : 
-                            <span class="italic">
-                                {{ $question['correct_answer'] }}
-                            </span>
-                        </div>
+<!-- Section pour les admins : Liste des questions QCM -->
+@can('view-qcm', $assessment)
+    @if(isset($qcm) && is_array($qcm) && !empty($qcm))
+        <div class="space-y-6">
+            @foreach($qcm as $index => $question)
+                <!-- Carte individuelle de question -->
+                <div class="p-4 rounded-lg border border-purple-200 bg-sky-50">
+                    <p class="font-semibold text-gray-800 mb-3">{{ $index + 1 }}. {{ $question['question'] }}</p>
+                    <ul class="space-y-1 text-gray-700 pl-4">
+                        @foreach($question['choices'] as $choiceIndex => $choice)
+                            <li><span class="font-medium">{{ $choiceIndex + 1 }}.</span> {{ $choice }}</li>
+                        @endforeach
+                    </ul>
+                    <div class="mt-4 text-sm text-lime-800 font-semibold">
+                        Bonne réponse : <span class="italic">{{ $question['correct_answer'] }}</span>
                     </div>
-                @endforeach
-            </div>
-        @else
-            <!-- Message si aucun QCM n'a été généré -->
-            <p class="text-gray-600 italic">Aucune question générée.</p>
-        @endif
-    </div>
-
-    <form action="{{ route('knowledge.submit', $assessment->id) }}" method="POST" class="bg-white px-6 rounded-md shadow-md mx-auto">
-    @csrf
-
-    @foreach ($qcm as $index => $question)
-        <div class="p-4 rounded-lg border border-purple-200 bg-sky-50 mb-6">
-            <!-- Texte de la question -->
-            <p class="font-semibold text-gray-800 mb-3">
-                <strong>Q{{ $index + 1 }} : </strong> {{ $question['question'] }}
-            </p>
-
-            <!-- Liste des choix possibles -->
-            <ul class="space-y-2 text-gray-700 pl-4">
-                @foreach ($question['choices'] as $choiceIndex => $choice)
-                    <li>
-                        <label class="flex items-center  gap-3">
-                            <input type="radio" name="answers[{{ $index }}]" value="{{ $choice }}" required class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <span class="text-sm">{{ $choice }}</span>
-                        </label>
-                    </li>
-                @endforeach
-            </ul>
+                </div>
+            @endforeach
         </div>
-    @endforeach
+    @else
+        <p class="text-gray-600 italic">Aucune question générée.</p>
+    @endif
+@endcan
 
-    <div class="text-center">
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-            Soumettre
-        </button>
-    </div>
-</form>
+<!-- Section pour les étudiants : Répondre au QCM -->
+@can('answer-qcm', $assessment)
+    <form action="{{ route('knowledge.submit', $assessment->id) }}" method="POST" class="bg-white px-6 rounded-md shadow-md mx-auto">
+        @csrf
+        @foreach ($qcm as $index => $question)
+            <div class="p-4 rounded-lg border border-purple-200 bg-sky-50 mb-6">
+                <p class="font-semibold text-gray-800 mb-3">
+                    <strong>Q{{ $index + 1 }} : </strong> {{ $question['question'] }}
+                </p>
+                <ul class="space-y-2 text-gray-700 pl-4">
+                    @foreach ($question['choices'] as $choiceIndex => $choice)
+                        <li>
+                            <label class="flex items-center gap-3">
+                                <input type="radio" name="answers[{{ $index }}]" value="{{ $choice }}" required class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                <span class="text-sm">{{ $choice }}</span>
+                            </label>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endforeach
+
+        <div class="text-center">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                Soumettre
+            </button>
+        </div>
+    </form>
+@endcan
 
     <!-- Bouton pour retourner à la page précédente -->
     <div class="mt-8">

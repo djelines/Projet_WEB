@@ -65,17 +65,22 @@
 
                         <!-- Actions -->
                         <div class="flex justify-center gap-3 mt-2 mb-4 px-6">
-                            @can('view', $assessment)
-                                <a href="{{ route('knowledge.show', $assessment->id) }}" class="bg-indigo-800 hover:bg-indigo-900 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                                    Voir le QCM
-                                </a>
-                            @endcan
+                        @can('view', $assessment)
+    @if(auth()->user()->school()->pivot->role === 'student')
+        <!-- Bouton pour l'étudiant -->
+        <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" 
+           class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+            Faire le QCM
+        </a>
+    @else
+        <!-- Bouton pour l'admin -->
+        <a href="{{ route('knowledge.show', $assessment->id) }}" 
+           class="bg-blue-700 hover:bg-blue-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+            Voir le QCM
+        </a>
+    @endif
+@endcan
 
-                            @can('answer', $assessment)
-                                <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                                    Faire le QCM
-                                </a>
-                            @endcan
 
                             @can('delete', $assessment)
                                 <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" onsubmit="return confirm('Supprimer ce bilan ?')">
