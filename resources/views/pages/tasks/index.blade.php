@@ -46,11 +46,11 @@
             <!-- Flexbox + wrap to allow elements to return to the line -->
             <div class="flex flex-wrap gap-8 mt-6 justify-center">
                 @forelse ($tasks as $task)
-                    <div class="max-w-xs bg-white shadow-lg rounded-lg p-6 relative transform transition duration-300 hover:scale-105 hover:shadow-xl border-2 border-gray-200 flex flex-col w-full sm:w-1/2 lg:w-1/3">
+                    <div class="max-w-xs bg-white dark:bg-[--tw-page-bg-dark] shadow-lg rounded-lg p-6 relative transform transition duration-300 hover:scale-105 hover:shadow-xl border-2 border-gray-200 flex flex-col w-full sm:w-1/2 lg:w-1/3">
                         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-sm rounded-tr-sm"></div>
 
                         <!-- Title centred and coloured according to category -->
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center ">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 ">
                             {{ $task->title }}
                         </h3>
                         <hr>
@@ -85,10 +85,12 @@
 
                         <!-- Description in italics -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
+                        
                         @if($task->cohorts->isNotEmpty())
-                            <p class="text-sm text-gray-700">Promotions associées : 
-                                {{ $task->cohorts->pluck('name')->join(', ') }}
-                            </p>
+                        <p class="text-xs text-gray-800 bg-gray-100 px-4 py-2 rounded shadow-sm">
+                            <span class="font-semibold text-blue-600">Promotion(s) associée(s) :</span> 
+                            {{ $task->cohorts->pluck('name')->join(', ') }}
+                        </p>
                         @endif
 
                         <!-- Actions pour pointer, commenter, etc. -->

@@ -41,11 +41,19 @@ class DatabaseSeeder extends Seeder
             'password'      => Hash::make('123456'),
         ]);
 
+        $user2 = User::create([
+            'last_name'     => 'Student',
+            'first_name'    => 'Student',
+            'email'         => 'student2@codingfactory.com',
+            'password'      => Hash::make('123456'),
+        ]);
+
         // Create the default school
         $school = School::create([
             'user_id'   => $user->id,
             'name'      => 'Coding Factory',
         ]);
+        
 
         // Create the admin role
         UserSchool::create([
@@ -64,6 +72,12 @@ class DatabaseSeeder extends Seeder
         // Create the student role
         UserSchool::create([
             'user_id'   => $user->id,
+            'school_id' => $school->id,
+            'role'      => 'student'
+        ]);
+
+        UserSchool::create([
+            'user_id'   => $user2->id,
             'school_id' => $school->id,
             'role'      => 'student'
         ]);
@@ -87,7 +101,7 @@ class DatabaseSeeder extends Seeder
         DB::table('cohort_user')->insert([
             [
                 'user_id' => $user->id, // student
-                'cohort_id' => $promo2->id,
+                'cohort_id' => $promo1->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -106,6 +120,12 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $teacher->id,
                 'cohort_id' => $promo1->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $user2->id,
+                'cohort_id' => $promo2->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

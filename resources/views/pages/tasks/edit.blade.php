@@ -5,11 +5,11 @@
             </h1>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6">
+    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6 dark:bg-[--tw-page-bg-dark]">
         <h1 class="text-2xl font-semibold text-white p-6 items-center text-center bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-2xl rounded-tr-2xl ">Modifier la Tâche</h1>
 
     
-        <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="space-y-4 p-8 bg-white rounded-xl shadow-lg">
+        <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="space-y-4 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl shadow-lg">
             @csrf
             @method('PUT')
 
@@ -34,7 +34,7 @@
             <div class="space-y-2">
                 <label for="cohorts" class="block text-base font-semibold text-gray-800">Promos concernées</label>
                 <select name="cohorts[]" id="cohorts" multiple required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-[--tw-page-bg-dark] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                     @foreach($allCohorts as $cohort)
                         <option value="{{ $cohort->id }}"
                             {{ in_array($cohort->id, $task->cohorts->pluck('id')->toArray()) ? 'selected' : '' }}>
@@ -50,7 +50,7 @@
             <div class="space-y-2">
                 <label for="category" class="block text-base font-semibold text-gray-800">Catégorie</label>
                 <select name="category" id="category" 
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-[--tw-page-bg-dark] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                     <option value="Ménage" {{ $task->category == 'Ménage' ? 'selected' : '' }}>Ménage</option>
                     <option value="Rangement" {{ $task->category == 'Rangement' ? 'selected' : '' }}>Rangement</option>
                     <option value="Courses groupées" {{ $task->category == 'Courses groupées' ? 'selected' : '' }}>Courses groupées</option>

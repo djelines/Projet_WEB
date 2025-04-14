@@ -7,7 +7,7 @@
     
     <div class="space-y-8 p-6">
         @forelse ($tasks as $task)
-            <div class="bg-white p-4 rounded-lg shadow-md">
+            <div class="bg-white p-4 rounded-lg shadow-md dark:bg-[--tw-page-bg-dark]">
                 <h3 class="text-2xl font-semibold text-gray-800">{{ $task->title }}</h3>
                 
                 <ul class="mt-4 space-y-2">

@@ -48,12 +48,12 @@
             <!-- Liste des bilans sous forme de cartes -->
             <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6">
                 @foreach($assessments as $assessment)
-                    <div class="bg-white border-2 border-gray-200 shadow-md rounded-xl flex flex-col justify-between">
+                    <div class="bg-white dark:bg-[--tw-page-bg-dark] border-2 border-gray-200 shadow-md rounded-xl flex flex-col justify-between">
                         <!-- Bandeau coloré -->
                         <div class="w-full h-2 rounded-t bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 mb-4"></div>
 
                         <!-- Contenu -->
-                        <h2 class="text-lg font-semibold text-sky-900 text-center">Bilan #{{ $assessment->id }}</h2>
+                        <h2 class="text-lg font-semibold  text-sky-900 text-center">Bilan #{{ $assessment->id }}</h2>
 
                         <div class="text-gray-700 text-sm bg-gray-100 border space-y-2 py-3 text-center mt-3 mb-3">
                             <p><span class="font-medium text-gray-600">Langages :</span> {{ implode(', ', $assessment->languages) }}</p>

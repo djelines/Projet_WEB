@@ -8,7 +8,7 @@
     
     <div class="container mx-auto mt-10 px-4">
         <!-- Section : Informations générales du bilan -->
-    <div class="relative bg-white shadow-md rounded-xl p-6 border-2 border-gray-200">
+    <div class="relative bg-white dark:bg-[--tw-page-bg-dark] shadow-md rounded-xl p-6 border-2 border-gray-200">
         
         <!-- Bandeau de dégradé décoratif en haut de la carte -->
         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 rounded-tl-sm rounded-tr-sm"></div>
@@ -19,33 +19,26 @@
         <!-- Cartes individuelles pour les détails du bilan -->
         <div class="flex flex-wrap gap-4 text-gray-800 mt-2">
             <!-- Langages évalués -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 rounded-md p-3 shadow-sm">
+            <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
                 <span class="block text-sm font-semibold text-gray-600">Évaluation</span>
                 <p class="text-sm">{{ $assessment->difficulty }} - {{ implode(', ', $assessment->languages) }}</p>
             </div>
 
             <!-- Niveau de difficulté -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 border rounded-md p-3 shadow-sm">
+            <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
                 <span class="block text-sm font-semibold text-gray-600">Informations</span>
                 <p class="text-sm">Vous avez répondu à <strong>{{ $score }}</strong> sur <strong>{{ $assessment->num_questions }}</strong> questions correctement.</p>
             </div>
 
             <!-- Nombre total de questions -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 border rounded-md p-3 shadow-sm">
+            <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
                 <span class="block text-sm font-semibold text-gray-600">Note Finale</span>
                 <p class="text-sm">{{ $score }} sur {{ $assessment->num_questions }}</p>
             </div>
         </div>
     </div>
 
-
-        @if(session('success'))
-            <div class="bg-green-200 text-green-700 p-4 rounded-md mb-6 shadow-md">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <div class="bg-white p-6 rounded-md shadow-md">
+        <div class="bg-white  dark:bg-[--tw-page-bg-dark] p-6 rounded-md shadow-md mt-3">
             <div class="mt-6">
                 <h3 class="font-semibold text-lg text-gray-800">Détails des réponses :</h3>
                 <table class="min-w-full bg-white border border-gray-200 rounded-md shadow-md mt-4">
@@ -58,7 +51,7 @@
                     </thead>
                     <tbody>
                         @foreach ($qcm as $index => $question)
-                            <tr class="border-t border-gray-200">
+                            <tr class="border-t border-gray-200 dark:bg-[--tw-page-bg-dark]">
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $question['question'] }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">
                                     {{ $userAnswers[$index] ?? 'Aucune réponse' }}

@@ -21,7 +21,7 @@
                 <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Action</th>
             </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-100">
+        <tbody class="bg-white dark:bg-[--tw-page-bg-dark] divide-y divide-gray-100">
             @forelse ($results as $result)
                 <tr class="hover:bg-sky-50 transition duration-200">
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">

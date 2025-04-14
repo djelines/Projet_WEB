@@ -6,9 +6,9 @@
     </x-slot>
 
     <!-- begin: grid -->
-    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6">
+    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6 dark:bg-[--tw-page-bg-dark] ">
         <h1 class="text-2xl font-semibold text-white p-6 items-center text-center bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-2xl rounded-tr-2xl ">Créer une Tâche</h1>
-            <form action="{{ route('tasks.store') }}" method="POST" class="space-y-4 p-8 bg-white rounded-xl shadow-lg">
+            <form action="{{ route('tasks.store') }}" method="POST" class="space-y-4 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl shadow-lg">
                 @csrf
 
                 <div class="space-y-2">
@@ -35,7 +35,7 @@
                 <div class="space-y-2">
     <label for="cohorts" class="block text-base font-semibold text-gray-800">Affecter à une ou plusieurs promotions</label>
     <select name="cohorts[]" id="cohorts" multiple required
-        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-[--tw-page-bg-dark] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
         @foreach ($cohorts as $cohort)
             <option value="{{ $cohort->id }}">{{ $cohort->name }}</option>
         @endforeach
@@ -47,9 +47,9 @@
 </div>
 
                 <div class="space-y-2">
-                    <label for="category" class="block text-base font-semibold text-gray-800">Catégorie</label>
+                    <label for="category" class="block text-base font-semibold text-gray-800 ">Catégorie</label>
                         <select name="category" id="category"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg dark:bg-[--tw-page-bg-dark] shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                             <option value="" disabled selected>— Sélectionner une catégorie —</option>
                             <option value="Ménage">Ménage</option>
                             <option value="Rangement">Rangement</option>

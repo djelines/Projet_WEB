@@ -6,12 +6,12 @@
     </x-slot>
 
     <!-- begin: grid -->
-    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 rounded-2xl border-6">
+    <div class="max-w-3xl mx-auto mt-4 !shadow-xl bg-slate-50 dark:bg-[--tw-page-bg-dark] rounded-2xl border-6">
         <h1 class="text-2xl font-semibold text-white p-6 items-center text-center bg-gradient-to-r from-indigo-600 via-blue-500 to-teal-400 rounded-tl-2xl rounded-tr-2xl">
             Détails de la Tâche
         </h1>
 
-        <div class="space-y-4 p-8 bg-white rounded-xl shadow-lg">
+        <div class="space-y-4 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl shadow-lg">
 
             <div class="space-y-2">
                 <label class="block text-base font-semibold text-gray-800">Catégorie</label>

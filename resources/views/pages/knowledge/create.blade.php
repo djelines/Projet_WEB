@@ -7,14 +7,14 @@
     </x-slot>
 
     <!-- Conteneur principal -->
-    <div class="max-w-3xl mx-auto mt-4 shadow-xl bg-slate-50 rounded-2xl border-6 ">
+    <div class="max-w-3xl mx-auto mt-4 shadow-xl bg-slate-50 rounded-2xl border-6 dark:bg-[--tw-page-bg-dark]">
         <!-- Bandeau titre en dégradé -->
         <h1 class="text-2xl font-semibold text-white p-6 text-center bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500 rounded-tl-2xl rounded-tr-2xl">
             Créer un Bilan de Compétence
         </h1>
 
         <!-- Formulaire -->
-        <form method="POST" action="{{ route('knowledge.store') }}" class="space-y-6 p-8 bg-white rounded-xl !shadow-xl">
+        <form method="POST" action="{{ route('knowledge.store') }}" class="space-y-6 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl !shadow-xl">
             @csrf
 
             <!-- Langages -->
