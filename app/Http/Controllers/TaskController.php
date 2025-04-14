@@ -68,9 +68,6 @@ class TaskController extends Controller
             'cohorts.*' => 'exists:cohorts,id'
             
         ]);
-
-        // If validation fails, Laravel will redirect the user and inject the errors into the session.
-        // If validation succeeds, execution will continue as normal.
             
         // Creation of the task if validation succeeds.
         $task = Task::create([

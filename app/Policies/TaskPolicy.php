@@ -37,7 +37,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->school()->pivot->role === 'admin';;
+        return $user->school()->pivot->role === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $user->school()->pivot->role === 'admin';;
+        return $user->school()->pivot->role === 'admin';
     }
 
     /**
