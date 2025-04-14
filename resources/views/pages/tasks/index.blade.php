@@ -85,6 +85,11 @@
 
                         <!-- Description in italics -->
                         <p class="text-sm text-gray-600 mb-4 italic">{{ $task->description }}</p>
+                        @if($task->cohorts->isNotEmpty())
+                            <p class="text-sm text-gray-700">Promotions associées : 
+                                {{ $task->cohorts->pluck('name')->join(', ') }}
+                            </p>
+                        @endif
 
                         <!-- Actions pour pointer, commenter, etc. -->
                         @can('point', App\Models\Task::class)

@@ -19,4 +19,10 @@ class Cohort extends Model
         return $this->belongsToMany(User::class, 'cohort_user');
     }
 
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'cohort_task')->withTimestamps();
+    }
+
+
 }

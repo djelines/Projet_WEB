@@ -30,6 +30,22 @@
                     placeholder="Ajoutez des détails...">{{ $task->description }}</textarea>
             </div>
 
+            <!-- Promos concernées -->
+            <div class="space-y-2">
+                <label for="cohorts" class="block text-base font-semibold text-gray-800">Promos concernées</label>
+                <select name="cohorts[]" id="cohorts" multiple required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    @foreach($allCohorts as $cohort)
+                        <option value="{{ $cohort->id }}"
+                            {{ in_array($cohort->id, $task->cohorts->pluck('id')->toArray()) ? 'selected' : '' }}>
+                            {{ $cohort->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="text-sm text-gray-500">Utilisez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs promotions.</p>
+            </div>
+
+
             <!-- Category -->
             <div class="space-y-2">
                 <label for="category" class="block text-base font-semibold text-gray-800">Catégorie</label>

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
-
+use App\Models\Cohort; 
 
 class TaskController extends Controller
 {
@@ -18,13 +18,28 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        
-        $sortOrder = $request->get('sort', 'asc');  // If “sort” is present in the URL, otherwise use “asc” by default
+        $sortOrder = $request->get('sort', 'asc');
+        $user = auth()->user();
+        $userRole = $user->school()->pivot->role;
 
-        $tasks = Task::orderBy('created_at', $sortOrder)->paginate(9); // Allows tasks to be sorted and paginated
+        if ($userRole === 'student') {
+            // Récupère la/les promos de l'étudiant
+            $studentCohorts = $user->cohorts->pluck('id'); 
+
+            // Filtre les tâches liées aux promos de l'étudiant
+            $tasks = Task::whereHas('cohorts', function ($query) use ($studentCohorts) {
+                $query->whereIn('cohort_id', $studentCohorts);
+            })
+            ->orderBy('created_at', $sortOrder)
+            ->paginate(9);
+        } else {
+            // Pour les autres rôles : toutes les tâches
+            $tasks = Task::orderBy('created_at', $sortOrder)->paginate(9);
+        }
 
         return view('pages.tasks.index', compact('tasks'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -32,8 +47,10 @@ class TaskController extends Controller
      */
     public function create()
     {
-        return view('pages.tasks.create');
+        $cohorts = Cohort::all(); // Récupère toutes les promotions
+        return view('pages.tasks.create', compact('cohorts'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -47,14 +64,16 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'category' => 'required|string',
-            ''
+            'cohorts' => 'nullable|array',
+            'cohorts.*' => 'exists:cohorts,id'
+            
         ]);
 
         // If validation fails, Laravel will redirect the user and inject the errors into the session.
         // If validation succeeds, execution will continue as normal.
             
         // Creation of the task if validation succeeds.
-        Task::create([
+        $task = Task::create([
             'title' => $request->title,
             'description' => $request->description,
             'category' => $request->category, 
@@ -62,6 +81,9 @@ class TaskController extends Controller
         ]);
         
         // dd($request->all());  // This will display all the data sent in the request
+        if ($request->has('cohorts')) {
+            $task->cohorts()->attach($request->cohorts);
+        }
 
         // Redirects to the index page with the success message
         return redirect()->route('tasks.index')->with('success', 'Tâche créée avec succès !');
@@ -84,9 +106,11 @@ class TaskController extends Controller
      * Page blade which take to the modifications page 
      */
     public function edit(Task $task)
-    {   
-        return view('pages.tasks.edit', compact('task'));
+    {
+        $allCohorts = Cohort::all();
+        return view('pages.tasks.edit', compact('task', 'allCohorts'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -96,12 +120,13 @@ class TaskController extends Controller
         // Used to send the query to the table
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'category' => 'required|string',
+            'cohorts' => 'array|exists:cohorts,id'
         ]);
-
-        // Modifies and updates new valueste 
+        // Modifies and updates new values
         $task->update($request->only('title', 'description', 'category'));
+        $task->cohorts()->sync($request->input('cohorts', []));
 
         // Redirects to the index page with the success message
         return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' modifiée !');
