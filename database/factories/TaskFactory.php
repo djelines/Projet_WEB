@@ -39,7 +39,7 @@ class TaskFactory extends Factory
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
             'category' => $categories[array_rand($categories)],
-            'user_id' => 1 
+            'user_id' => 1 , 
             
         ];
     }
