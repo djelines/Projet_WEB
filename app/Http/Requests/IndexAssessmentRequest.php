@@ -8,15 +8,15 @@ class IndexAssessmentRequest extends FormRequest
 {
     public function authorize()
     {
-        // Autoriser l'accès à tous les utilisateurs (ou ajuster selon votre logique)
+        // Authorise access to all users
         return true;
     }
 
     public function rules()
     {
         return [
-            'sort' => 'in:asc,desc',   // Tri ascendant ou descendant
-            'sort_by' => 'in:created_at,id', // Tri par date de création ou ID
+            'sort' => 'in:asc,desc',   // Sort ascending or descending
+            'sort_by' => 'in:created_at,id', // Sort by creation date or ID
         ];
     }
 

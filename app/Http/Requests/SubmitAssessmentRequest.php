@@ -8,7 +8,7 @@ class SubmitAssessmentRequest extends FormRequest
 {
     public function authorize()
     {
-        // Autoriser l'accès à tous les utilisateurs (ou ajuster selon votre logique)
+       
         return true;
     }
 
@@ -16,7 +16,7 @@ class SubmitAssessmentRequest extends FormRequest
     {
         return [
             'answers' => 'required|array',
-            'answers.*' => 'required|string',  // Chaque réponse doit être une chaîne de caractères
+            'answers.*' => 'required|string',  // Must be string
         ];
     }
 

@@ -17,25 +17,32 @@
         <h2 class="text-xl font-semibold text-sky-900 mb-6 mt-2">Résultat de l'évaluation</h2>
 
         <!-- Cartes individuelles pour les détails du bilan -->
-        <div class="flex flex-wrap gap-4 text-gray-800 mt-2">
-            <!-- Langages évalués -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Évaluation</span>
-                <p class="text-sm">{{ $assessment->difficulty }} - {{ implode(', ', $assessment->languages) }}</p>
-            </div>
+<div class="flex flex-wrap gap-4 text-gray-800 mt-2">
+    <!-- Langages évalués -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Langages évalués</span>
+        <p class="text-sm">{{ implode(', ', $assessment->languages) }}</p>
+    </div>
 
-            <!-- Niveau de difficulté -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Informations</span>
-                <p class="text-sm">Vous avez répondu à <strong>{{ $score }}</strong> sur <strong>{{ $assessment->num_questions }}</strong> questions correctement.</p>
-            </div>
+    <!-- Nombre de bonnes réponses -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Bonnes réponses</span>
+        <p class="text-sm">{{ $score }} sur {{ $assessment->num_questions }}</p>
+    </div>
 
-            <!-- Nombre total de questions -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Note Finale</span>
-                <p class="text-sm">{{ $score }} sur {{ $assessment->num_questions }}</p>
-            </div>
-        </div>
+    <!-- Nombre de mauvaises réponses -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Mauvaises réponses</span>
+        <p class="text-sm">{{ $assessment->num_questions - $score }}</p>
+    </div>
+
+    <!-- Note finale sur 20 -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-fuchsia-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Note Finale</span>
+        <p class="text-sm">{{ number_format(($score / $assessment->num_questions) * 20, 2) }} / 20</p>
+    </div>
+</div>
+
     </div>
 
         <div class="bg-white  dark:bg-[--tw-page-bg-dark] p-6 rounded-md shadow-md mt-3">

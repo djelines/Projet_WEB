@@ -8,12 +8,12 @@ class CreateAssessmentRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;  // Tout utilisateur peut accéder à cette page (ajuster si nécessaire)
+        return true;  // Any user can access this page 
     }
 
     public function rules()
     {
-        // Pas de validation particulière pour "create"
+        // No particular validation required for "create
         return [];
     }
 

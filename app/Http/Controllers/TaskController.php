@@ -14,7 +14,7 @@ class TaskController extends Controller
 
     /**
      * Display a listing of the resource.
-     * Page blade which take to the modifications page
+     * Blade page which leads to the modifications page
      */
     public function index(Request $request)
     {
@@ -23,10 +23,10 @@ class TaskController extends Controller
         $userRole = $user->school()->pivot->role;
 
         if ($userRole === "student") {
-            // Récupère la/les promos de l'étudiant
+            // Retrieve the cohort(s) associated with the student
             $studentCohorts = $user->cohorts->pluck("id");
 
-            // Filtre les tâches liées aux promos de l'étudiant
+             // Filter tasks linked to the student's cohorts
             $tasks = Task::whereHas("cohorts", function ($query) use (
                 $studentCohorts
             ) {
@@ -35,7 +35,7 @@ class TaskController extends Controller
                 ->orderBy("created_at", $sortOrder)
                 ->paginate(9);
         } else {
-            // Pour les autres rôles : toutes les tâches
+             // For other roles: retrieve all tasks
             $tasks = Task::orderBy("created_at", $sortOrder)->paginate(9);
         }
 
@@ -48,7 +48,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $cohorts = Cohort::all(); // Récupère toutes les promotions
+        $cohorts = Cohort::all(); // Get all promotions
         return view("pages.tasks.create", compact("cohorts"));
     }
 
@@ -164,14 +164,14 @@ class TaskController extends Controller
             );
         }
 
-        // Vérifier si l'utilisateur a déjà pointé cette tâche
+        // Check whether the user has already selected this task
         $taskUser = $task
             ->users()
             ->where("user_id", $user->id)
             ->first();
 
         if (!$taskUser) {
-            // Ajouter une nouvelle entrée pour l'utilisateur
+            // Add a new entry for the user
             $task->users()->attach($user->id, [
                 "completed" => true,
                 "comment" => $request->input("comment"),
@@ -180,7 +180,7 @@ class TaskController extends Controller
             return back()->with("error", "Tâche déjà pointée.");
         }
 
-        // Redirection vers la page index avec un message de succès
+        // Redirect to the index page with a success message
         return redirect()
             ->route("tasks.index")
             ->with(

@@ -53,6 +53,9 @@ class Task extends Model
                     ->wherePivot('completed', true);
     }
 
+    /**
+      * Get all cohorts associated with this task.
+      */
     public function cohorts()
     {
         return $this->belongsToMany(Cohort::class, 'cohort_task')->withTimestamps();
