@@ -30,15 +30,13 @@ class KnowledgeController extends Controller
         $sortBy = $request->get("sort_by", "created_at"); // Tri par défaut sur created_at
 
         // Récupérer l'id de la cohorte de l'utilisateur connecté via la table pivot
-        $userCohortId = auth()
-            ->user()
-            ->cohorts()
-            ->first()->id;
+        $userCohortIds = auth()->user()->cohorts->pluck('id');
+
 
         // Applique le tri et le filtre sur le bon champ et la cohorte de l'utilisateur connecté
-        $assessments = Assessment::where("cohort_id", $userCohortId)
-            ->orderBy($sortBy, $order)
-            ->paginate(6); // Utilisation de la pagination
+        $assessments = Assessment::whereIn("cohort_id", $userCohortIds)
+    ->orderBy($sortBy, $order)
+    ->paginate(6); // Utilisation de la pagination
 
         return view(
             "pages.knowledge.index",
@@ -52,7 +50,11 @@ class KnowledgeController extends Controller
     public function create()
     {
         $this->authorize("create", Assessment::class);
-        $languages = ["PHP", "JavaScript", "Python", "Java", "C++"];
+        // Available programming languages
+        $languages = ["Angular", "C#", "C++", "Dart", "Docker", "Django", "Express.js", 
+        "Flask", "Git", "Go", "GraphQL", "Java", "JavaScript", "Kotlin", "Laravel", "NestJS", 
+        "Next.js", "Node.js", "PHP", "Python", "React", "Rust", "SQL", "Spring Boot", "Svelte", 
+        "Swift", "Symfony", "TypeScript", "Vue.js"];
         $cohorts = Cohort::all();
 
         return view("pages.knowledge.create", compact("languages", "cohorts"));
