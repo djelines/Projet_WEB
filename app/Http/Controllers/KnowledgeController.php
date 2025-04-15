@@ -91,7 +91,7 @@ class KnowledgeController extends Controller
         if (!Auth::user()->cohorts->contains($cohort)) {
             return back()->with(
                 "error",
-                "Vous ne faites pas partie de cette cohorte."
+                "You are not part of this cohort."
             );
         }
 
@@ -121,6 +121,7 @@ class KnowledgeController extends Controller
         ]);
     }
 
+
     /**
      * Displays a specific skill assessment.
      */
@@ -134,11 +135,14 @@ class KnowledgeController extends Controller
         // If it's a string, decode the JSON string into an associative array
         // If it's not a string (probably already an array), use it as it is
         $qcm = is_string($assessment->questions)
-            ? json_decode($assessment->questions, true)
-            : $assessment->questions;
+        ? // If it's a string, decode the JSON string into an associative array
+        json_decode($assessment->questions, true)
+        : // If it's not a string (probably already an array), use it as it is
+        $assessment->questions;
 
         return view("pages.knowledge.show", compact("assessment", "qcm"));
     }
+
 
     /**
      * Delete a skill assessment. 
@@ -171,7 +175,8 @@ class KnowledgeController extends Controller
         $prompt =
             "Je veux générer un QCM pour évaluer des étudiants sur les langages suivants : " .
             implode(", ", $languages) .
-            ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. Chaque question doit comporter $numAnswers choix, dont une seule bonne réponse. La réponse doit être au format JSON uniquement. Voici la structure des questions :
+            ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. Chaque question doit comporter $numAnswers choix, dont une seule bonne réponse. 
+            Chaque question ne peut avoir que une seule bonne réponse. La réponse doit être au format JSON uniquement. Voici la structure des questions :
         - \"question\" : le texte de la question
         - \"choices\" : un tableau de choix
         - \"correct_answer\" : la bonne réponse
@@ -251,7 +256,7 @@ class KnowledgeController extends Controller
         if ($existingResult) {
             return redirect()
                 ->route("knowledge.result", $existingResult->id)
-                ->with("error", "Vous avez déjà répondu à ce bilan.");
+                ->with("error", "You have already answered this assessment.");
         }
 
         // If not, continue processing

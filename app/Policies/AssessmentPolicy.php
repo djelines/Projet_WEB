@@ -72,7 +72,7 @@ class AssessmentPolicy
       */
     public function viewHistory(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher' ;
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
     /**
@@ -90,7 +90,7 @@ class AssessmentPolicy
       */
     public function result(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher';
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
     /**
@@ -99,7 +99,7 @@ class AssessmentPolicy
       */
     public function viewQcm(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher';
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
     /**
@@ -110,5 +110,6 @@ class AssessmentPolicy
     {
         return $user->school()->pivot->role === 'student';
     }
+
 
 }

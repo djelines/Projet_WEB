@@ -67,9 +67,6 @@ Route::middleware('auth')->group(function () {
 
         // Tasks
         // Route de complétion + historique, définie avant le resource
-        //Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])->name('tasks.complete');
-        //Route::get('/tasks/history', [TaskController::class, 'viewHistory'])->name('tasks.history');
-        //Route::resource('tasks', TaskController::class);
         
         // Admins only
         Route::middleware(['can:manage,App\Models\Task'])->group(function () {
@@ -91,9 +88,6 @@ Route::middleware('auth')->group(function () {
         Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])
             ->middleware('can:point,App\Models\Task')
             ->name('tasks.complete');
-
-       
-
     });
 
 });

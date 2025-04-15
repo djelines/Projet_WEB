@@ -38,19 +38,18 @@
                            class="inline-block bg-indigo-600 hover:bg-indigo-900 !text-white text-sm font-semibold px-4 py-2 rounded-lg transition duration-300">
                             Voir les réponses
                         </a>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="4" class="px-6 py-6 text-center text-gray-500 italic">
-                        <img src="{{ asset('images/uncompletedAssessment.svg') }}" alt="Aucune tâche" class="mx-auto w-1/3 mb-3">
-                        Aucun résultat trouvé pour cette évaluation.
-                    </td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-6 text-center text-gray-500 italic">
+                            <img src="{{ asset('images/uncompletedAssessment.svg') }}" alt="Aucune tâche" class="mx-auto w-1/3 mb-3"> Aucun résultat trouvé pour cette évaluation.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
 
 <div class="mt-8 flex justify-between mr-5 ml-5">
