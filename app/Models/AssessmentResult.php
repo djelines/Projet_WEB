@@ -12,13 +12,20 @@ class AssessmentResult extends Model
         'answers' => 'array',
     ];
 
+    /**
+     * Get the assessment associated with this result.
+     */
     public function assessment()
     {
         return $this->belongsTo(Assessment::class);
     }
 
+    /**
+     * Get the user who submitted this result.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
 }

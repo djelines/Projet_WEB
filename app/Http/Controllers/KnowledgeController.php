@@ -21,24 +21,24 @@ class KnowledgeController extends Controller
 {
     use AuthorizesRequests;
     /**
-     * Affiche la page des bilans de compétence depuis la base de données.
+     * Displays the skill assessments page from the database.
      */
     public function index(IndexAssessmentRequest $request)
     {
-        // Récupérer les paramètres validés
-        $order = $request->get("sort", "desc"); // Par défaut, tri du plus récent au plus ancien
-        $sortBy = $request->get("sort_by", "created_at"); // Tri par défaut sur created_at
+        // Retrieve the validated parameters
+        $order = $request->get("sort", "desc"); // Default sorting: from newest to oldest
+        $sortBy = $request->get("sort_by", "created_at"); // Default sorting by created_at
 
-        // Récupérer l'id de la cohorte de l'utilisateur connecté via la table pivot
+        // Retrieve the cohort ID of the authenticated user via the pivot table
         $userCohortId = auth()
             ->user()
             ->cohorts()
             ->first()->id;
 
-        // Applique le tri et le filtre sur le bon champ et la cohorte de l'utilisateur connecté
+        // Apply sorting and filtering based on the specified field and the user's cohort
         $assessments = Assessment::where("cohort_id", $userCohortId)
             ->orderBy($sortBy, $order)
-            ->paginate(6); // Utilisation de la pagination
+            ->paginate(6); // Use pagination
 
         return view(
             "pages.knowledge.index",
@@ -46,36 +46,43 @@ class KnowledgeController extends Controller
         );
     }
 
+
     /**
-     * Affiche le formulaire de création de bilan
+     * Displays the form to create a new skill assessment.
      */
     public function create()
-    {
+    {   
+        // Authorization check (policies)
         $this->authorize("create", Assessment::class);
-        $languages = ["PHP", "JavaScript", "Python", "Java", "C++"];
+
+        // Available programming languages
+        $languages = ["Angular", "C#", "C++", "Dart", "Docker", "Django", "Express.js", "Flask", "Git", "Go", "GraphQL", "Java", "JavaScript", "Kotlin", "Laravel", "NestJS", "Next.js", "Node.js", "PHP", "Python", "React", "Rust", "SQL", "Spring Boot", "Svelte", "Swift", "Symfony", "TypeScript", "Vue.js"];
+
+        // Retrieve all cohorts
         $cohorts = Cohort::all();
 
         return view("pages.knowledge.create", compact("languages", "cohorts"));
     }
 
     /**
-     * Gère la soumission du formulaire pour créer un bilan
+     * Handles the form submission to create a new skill assessment.
      */
     public function store(StoreAssessmentRequest $request)
     {
-        $validated = $request->validated(); // La validation est déjà faite à ce point
+        $validated = $request->validated(); // Validation is already done at this point
 
+        // Find the corresponding cohort
         $cohort = Cohort::findOrFail($validated["cohort_id"]);
 
-        // Vérifier si l'utilisateur appartient à cette cohorte
+        // Check if the user belongs to this cohort
         if (!Auth::user()->cohorts->contains($cohort)) {
             return back()->with(
                 "error",
-                "Vous ne faites pas partie de cette cohorte."
+                "You are not part of this cohort."
             );
         }
 
-        // Générer le QCM
+        // Generate the multiple-choice questionnaire (MCQ)
         $qcm = $this->generateQCM(
             $validated["languages"],
             $validated["num_questions"],
@@ -86,7 +93,7 @@ class KnowledgeController extends Controller
             return back()->with("error", $qcm["error"]);
         }
 
-        // Créer l'évaluation sans le champ "difficulty"
+        // Create the assessment without the "difficulty" field
         $assessment = Assessment::create([
             "languages" => $validated["languages"],
             "num_questions" => $validated["num_questions"],
@@ -101,24 +108,29 @@ class KnowledgeController extends Controller
         ]);
     }
 
+
     /**
-     * Affiche un bilan spécifique
+     * Displays a specific skill assessment.
      */
-    // Afficher uniquement les évaluations assignées à l'étudiant
     public function show($id)
-    {
+    {   
+        // Display only the assessments assigned to the student
         $assessment = Assessment::findOrFail($id);
         $this->authorize("view", $assessment);
 
+        // Check if the questions are in JSON string format
         $qcm = is_string($assessment->questions)
-            ? json_decode($assessment->questions, true)
-            : $assessment->questions;
+        ? // If it's a string, decode the JSON string into an associative array
+        json_decode($assessment->questions, true)
+        : // If it's not a string (probably already an array), use it as it is
+        $assessment->questions;
 
         return view("pages.knowledge.show", compact("assessment", "qcm"));
     }
 
+
     /**
-     * Supprime un bilan
+     * Delete a skill assessment. 
      */
     public function destroy($id)
     {
@@ -132,23 +144,24 @@ class KnowledgeController extends Controller
     }
 
     /**
-     * Génère un QCM avec Gemini
+     * Generates a multiple-choice questionnaire (MCQ) using Gemini.
      */
     private function generateQCM(
         array $languages,
         int $numQuestions,
         int $numAnswers
     ) {
-        // Déterminer les proportions de questions selon la difficulté
+        // Determine the proportion of questions based on difficulty
         $easyCount = ceil($numQuestions * 0.3);
         $mediumCount = ceil($numQuestions * 0.4);
         $hardCount = $numQuestions - ($easyCount + $mediumCount);
 
-        // Préparer le prompt pour Gemini avec la nouvelle description
+        // Prepare the prompt for Gemini with the new description
         $prompt =
             "Je veux générer un QCM pour évaluer des étudiants sur les langages suivants : " .
             implode(", ", $languages) .
-            ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. Chaque question doit comporter $numAnswers choix, dont une seule bonne réponse. La réponse doit être au format JSON uniquement. Voici la structure des questions :
+            ". Crée exactement $numQuestions questions à choix multiples. Les questions doivent être directement liées aux langages fournis. Chaque question doit comporter $numAnswers choix, dont une seule bonne réponse. 
+            Chaque question ne peut avoir que une seule bonne réponse. La réponse doit être au format JSON uniquement. Voici la structure des questions :
         - \"question\" : le texte de la question
         - \"choices\" : un tableau de choix
         - \"correct_answer\" : la bonne réponse
@@ -160,7 +173,7 @@ class KnowledgeController extends Controller
 
         Merci de générer le QCM selon ces spécifications.";
 
-        // Envoi à l'IA pour générer les questions
+        // Send the request to Gemini to generate the questions
         $response = Http::withHeaders([
             "Content-Type" => "application/json",
         ])->post(
@@ -209,12 +222,15 @@ class KnowledgeController extends Controller
         return ["error" => "Erreur lors de la génération du QCM."];
     }
 
+   /**
+     * Handle the submission of the assessment.
+     */
     public function submit(SubmitAssessmentRequest $request, $id)
     {
         $assessment = Assessment::findOrFail($id);
         $user = Auth::user();
 
-        // Vérifier si l'étudiant a déjà répondu à ce bilan
+        // Check if the student has already answered this assessment
         $existingResult = AssessmentResult::where(
             "assessment_id",
             $assessment->id
@@ -225,16 +241,17 @@ class KnowledgeController extends Controller
         if ($existingResult) {
             return redirect()
                 ->route("knowledge.result", $existingResult->id)
-                ->with("error", "Vous avez déjà répondu à ce bilan.");
+                ->with("error", "You have already answered this assessment.");
         }
 
-        // Si non, on poursuit le traitement
+        // If not, continue processing
         $qcm = is_string($assessment->questions)
             ? json_decode($assessment->questions, true)
             : $assessment->questions;
         $userAnswers = $request->input("answers", []);
         $score = 0;
 
+        // Loop through each question and check if the answer is correct
         foreach ($qcm as $index => $question) {
             if (
                 isset($userAnswers[$index]) &&
@@ -244,7 +261,7 @@ class KnowledgeController extends Controller
             }
         }
 
-        // Enregistrer les résultats
+        // Save the results
         $result = AssessmentResult::create([
             "assessment_id" => $assessment->id,
             "user_id" => $user->id,
@@ -252,14 +269,19 @@ class KnowledgeController extends Controller
             "score" => $score,
         ]);
 
-        // Passer à la vue des résultats
+        // Redirect to the result view
         return redirect()->route("knowledge.result", $result->id);
     }
 
+    /**
+     * Display the result of the assessment.
+     */
     public function result($id)
     {
+        // Retrieve the result with its associated assessment
         $result = AssessmentResult::with("assessment")->findOrFail($id);
 
+        // Decode the questions if they are stored as a JSON string
         $qcm = is_string($result->assessment->questions)
             ? json_decode($result->assessment->questions, true)
             : $result->assessment->questions;
@@ -272,11 +294,18 @@ class KnowledgeController extends Controller
         ]);
     }
 
+    /**
+     * Display the history of the assessment results.
+     */
     public function history($id)
     {
+        // Retrieve the assessment or fail
         $assessment = Assessment::findOrFail($id);
+
+        // Check if the user is authorized to view the history
         $this->authorize("viewHistory", $assessment);
 
+        // Retrieve all results for this assessment, ordered by most recent
         $results = AssessmentResult::with("user")
             ->where("assessment_id", $assessment->id)
             ->orderByDesc("created_at")
@@ -287,4 +316,5 @@ class KnowledgeController extends Controller
             compact("assessment", "results")
         );
     }
+
 }

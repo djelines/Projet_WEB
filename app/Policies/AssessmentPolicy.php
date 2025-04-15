@@ -66,31 +66,50 @@ class AssessmentPolicy
         return false;
     }
 
+    /**
+     * Determine if the user can view the history of assessment results.
+     * Only admins and teachers are allowed.
+     */
     public function viewHistory(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher' ;
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
-    
-
+    /**
+     * Determine if the user can submit this assessment.
+     * Only allowed if the user belongs to the assessment's cohort.
+     */
     public function submit(User $user, Assessment $assessment)
     {
         return $assessment->cohort->users->contains($user);
     }
 
+    /**
+     * Determine if the user can view the result of the assessment.
+     * Only admins and teachers are allowed.
+     */
     public function result(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher';
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
+    /**
+     * Determine if the user can view the QCM content of the assessment.
+     * Only admins and teachers are allowed.
+     */
     public function viewQcm(User $user, Assessment $assessment)
     {
-        return $user->school()->pivot->role === 'admin' or $user->school()->pivot->role === 'teacher';
+        return $user->school()->pivot->role === 'admin' || $user->school()->pivot->role === 'teacher';
     }
 
+    /**
+     * Determine if the user is allowed to answer the QCM.
+     * Only students are allowed.
+     */
     public function answerQcm(User $user, Assessment $assessment)
     {
         return $user->school()->pivot->role === 'student';
     }
+
 
 }
