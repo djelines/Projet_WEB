@@ -6,84 +6,83 @@ use Illuminate\Http\Request;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
-use App\Models\Cohort; 
+use App\Models\Cohort;
 
 class TaskController extends Controller
 {
-    // Using php artisan make:controller TaskController --resource 
+    // Using php artisan make:controller TaskController --resource
 
     /**
      * Display a listing of the resource.
-     * Page blade which take to the modifications page 
+     * Page blade which take to the modifications page
      */
     public function index(Request $request)
     {
-        $sortOrder = $request->get('sort', 'asc');
+        $sortOrder = $request->get("sort", "asc");
         $user = auth()->user();
         $userRole = $user->school()->pivot->role;
 
-        if ($userRole === 'student') {
+        if ($userRole === "student") {
             // Récupère la/les promos de l'étudiant
-            $studentCohorts = $user->cohorts->pluck('id'); 
+            $studentCohorts = $user->cohorts->pluck("id");
 
             // Filtre les tâches liées aux promos de l'étudiant
-            $tasks = Task::whereHas('cohorts', function ($query) use ($studentCohorts) {
-                $query->whereIn('cohort_id', $studentCohorts);
+            $tasks = Task::whereHas("cohorts", function ($query) use (
+                $studentCohorts
+            ) {
+                $query->whereIn("cohort_id", $studentCohorts);
             })
-            ->orderBy('created_at', $sortOrder)
-            ->paginate(9);
+                ->orderBy("created_at", $sortOrder)
+                ->paginate(9);
         } else {
             // Pour les autres rôles : toutes les tâches
-            $tasks = Task::orderBy('created_at', $sortOrder)->paginate(9);
+            $tasks = Task::orderBy("created_at", $sortOrder)->paginate(9);
         }
 
-        return view('pages.tasks.index', compact('tasks'));
+        return view("pages.tasks.index", compact("tasks"));
     }
-
 
     /**
      * Show the form for creating a new resource.
-     * Page blade which take to the creation page 
+     * Page blade which take to the creation page
      */
     public function create()
     {
         $cohorts = Cohort::all(); // Récupère toutes les promotions
-        return view('pages.tasks.create', compact('cohorts'));
+        return view("pages.tasks.create", compact("cohorts"));
     }
-
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreTaskRequest $request)
     {
-       
-
         // Used to send the query to the table
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category' => 'required|string',
-            'cohorts' => 'nullable|array',
-            'cohorts.*' => 'exists:cohorts,id'
-            
+            "title" => "required|string|max:255",
+            "description" => "required|string",
+            "category" => "required|string",
+            "cohorts" => "nullable|array",
+            "cohorts.*" => "exists:cohorts,id",
         ]);
-            
+
         // Creation of the task if validation succeeds.
         $task = Task::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category' => $request->category, 
-            'user_id' => Auth::id(),
+            "title" => $request->title,
+            "description" => $request->description,
+            "category" => $request->category,
+            "user_id" => Auth::id(),
         ]);
-        
+
         // dd($request->all());  // This will display all the data sent in the request
-        if ($request->has('cohorts')) {
+        if ($request->has("cohorts")) {
             $task->cohorts()->attach($request->cohorts);
         }
 
         // Redirects to the index page with the success message
-        return redirect()->route('tasks.index')->with('success', 'Tâche créée avec succès !');
+        return redirect()
+            ->route("tasks.index")
+            ->with("success", "Tâche créée avec succès !");
     }
 
     /**
@@ -91,23 +90,20 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $fromHistory = request()->boolean('from_history');
+        $fromHistory = request()->boolean("from_history");
 
-        return view('pages.tasks.show', compact('task', 'fromHistory'));
-
+        return view("pages.tasks.show", compact("task", "fromHistory"));
     }
-
 
     /**
      * Show the form for editing the specified resource.
-     * Page blade which take to the modifications page 
+     * Page blade which take to the modifications page
      */
     public function edit(Task $task)
     {
         $allCohorts = Cohort::all();
-        return view('pages.tasks.edit', compact('task', 'allCohorts'));
+        return view("pages.tasks.edit", compact("task", "allCohorts"));
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -116,17 +112,19 @@ class TaskController extends Controller
     {
         // Used to send the query to the table
         $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string',
-            'cohorts' => 'array|exists:cohorts,id'
+            "title" => "required|string|max:255",
+            "description" => "nullable|string",
+            "category" => "required|string",
+            "cohorts" => "array|exists:cohorts,id",
         ]);
         // Modifies and updates new values
-        $task->update($request->only('title', 'description', 'category'));
-        $task->cohorts()->sync($request->input('cohorts', []));
+        $task->update($request->only("title", "description", "category"));
+        $task->cohorts()->sync($request->input("cohorts", []));
 
         // Redirects to the index page with the success message
-        return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' modifiée !');
+        return redirect()
+            ->route("tasks.index")
+            ->with("success", 'Tâche \'' . $task->title . '\' modifiée !');
     }
 
     /**
@@ -136,8 +134,9 @@ class TaskController extends Controller
     {
         $task->delete();
         // Redirects to the index page with the success message
-        return redirect()->route('tasks.index')->with('success', 'Tâche \'' . $task->title . '\' supprimée !');
-
+        return redirect()
+            ->route("tasks.index")
+            ->with("success", 'Tâche \'' . $task->title . '\' supprimée !');
     }
 
     /**
@@ -146,7 +145,7 @@ class TaskController extends Controller
      * This method allows students to mark a task as completed, provided that:
      * - The user is a student.
      * - The user has not previously marked the task as completed.
-     * 
+     *
      * If these conditions are met, the task completion is recorded in the pivot table with an optional comment.
      * Otherwise, an error message is returned.
      *
@@ -159,25 +158,35 @@ class TaskController extends Controller
         $user = auth()->user();
         $userRole = $user->school()->pivot->role;
 
-        if ($userRole !== 'student') {
-            return back()->withErrors('Seuls les étudiants peuvent marquer des tâches comme terminées.');
+        if ($userRole !== "student") {
+            return back()->withErrors(
+                "Seuls les étudiants peuvent marquer des tâches comme terminées."
+            );
         }
 
         // Vérifier si l'utilisateur a déjà pointé cette tâche
-        $taskUser = $task->users()->where('user_id', $user->id)->first();
+        $taskUser = $task
+            ->users()
+            ->where("user_id", $user->id)
+            ->first();
 
         if (!$taskUser) {
             // Ajouter une nouvelle entrée pour l'utilisateur
             $task->users()->attach($user->id, [
-                'completed' => true,
-                'comment' => $request->input('comment'),
+                "completed" => true,
+                "comment" => $request->input("comment"),
             ]);
         } else {
-            return back()->with('error', 'Tâche déjà pointée.');
+            return back()->with("error", "Tâche déjà pointée.");
         }
 
         // Redirection vers la page index avec un message de succès
-        return redirect()->route('tasks.index')->with('success', 'Tâche : \'' . $task->title . '\' marquée comme terminée !');
+        return redirect()
+            ->route("tasks.index")
+            ->with(
+                "success",
+                'Tâche : \'' . $task->title . '\' marquée comme terminée !'
+            );
     }
 
     /**
@@ -191,9 +200,12 @@ class TaskController extends Controller
     public function viewHistory()
     {
         $user = auth()->user();
-        $completedTasks = $user->tasks()->wherePivot('completed', true)->paginate(3);
-        
-        return view('pages.tasks.history', compact('completedTasks'));
+        $completedTasks = $user
+            ->tasks()
+            ->wherePivot("completed", true)
+            ->paginate(3);
+
+        return view("pages.tasks.history", compact("completedTasks"));
     }
 
     /**
@@ -206,14 +218,16 @@ class TaskController extends Controller
      */
     public function completedByStudents()
     {
-        $tasks = Task::with(['completedStudents' => function($query) {
-            $query->select('users.id', 'users.last_name', 'users.first_name');
-        }])->paginate(6);
-        
-        return view('pages.tasks.completed-by-students', compact('tasks'));
+        $tasks = Task::with([
+            "completedStudents" => function ($query) {
+                $query->select(
+                    "users.id",
+                    "users.last_name",
+                    "users.first_name"
+                );
+            },
+        ])->paginate(6);
+
+        return view("pages.tasks.completed-by-students", compact("tasks"));
     }
-
-
-
-
 }

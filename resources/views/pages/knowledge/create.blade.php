@@ -14,7 +14,7 @@
         </h1>
 
         <!-- Formulaire -->
-        <form method="POST" action="{{ route('knowledge.store') }}" class="space-y-6 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl !shadow-xl">
+        <form method="POST" id="formConfirm" action="{{ route('knowledge.store') }}" class="space-y-6 p-8 bg-white dark:bg-[--tw-page-bg-dark] rounded-xl !shadow-xl">
             @csrf
 
             <!-- Langages -->
@@ -81,4 +81,13 @@
             </div>
         </form>
     </div>
+
+
+    <!-- Charger le CDN de SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Charger le fichier compilé app.js (avec ton script personnalisé) -->
+    <script src="{{ mix('js/app.js') }}"></script>
+
+
 </x-app-layout>
