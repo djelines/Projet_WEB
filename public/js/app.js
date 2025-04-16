@@ -10494,6 +10494,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+document.addEventListener('DOMContentLoaded', function () {
+  var downloadBtn = document.getElementById('download-pdf');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Téléchargement en cours...',
+        text: "Le PDF est en cours de génération. Cela peut prendre quelques secondes.",
+        icon: 'info',
+        showCancelButton: false,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: {
+          popup: 'border-[3px] border-indigo-600 shadow-lg rounded-xl bg-white',
+          title: 'text-indigo-700 font-semibold text-lg',
+          htmlContainer: 'text-gray-600 text-sm',
+          icon: 'text-indigo-500'
+        },
+        didOpen: function didOpen() {
+          var popup = document.querySelector('.swal2-popup');
+          popup.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.4)';
+        },
+        willClose: function willClose() {
+          window.location.href = downloadBtn.getAttribute('href');
+        }
+      });
+    });
+  }
+});
 
 /***/ }),
 

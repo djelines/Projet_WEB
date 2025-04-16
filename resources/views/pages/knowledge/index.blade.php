@@ -17,16 +17,33 @@
             @endcan
         </div>
 
-        <div class="flex justify-end mb-4 gap-4">
-            <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
-               class="inline-block !bg-pink-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
-                Trier par date
-            </a>
+        <div class="flex justify-between items-center mb-4 gap-4">
+            <!-- Barre de recherche à gauche -->
+            <form method="GET" action="{{ route('knowledge.index') }}" class="flex gap-2 w-full max-w-sm">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Rechercher par ID, langage ou auteur"
+                    class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button type="submit" class="!bg-slate-500 hover:!bg-slate-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
+                    Rechercher
+                </button>
+            </form>
 
-            <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'id']) }}"
-               class="inline-block !bg-teal-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
-                Trier par ID
-            </a>
+            <!-- Boutons de tri à droite -->
+            <div class="flex items-center gap-4">
+                <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'created_at']) }}"
+                class="inline-block !bg-pink-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                    Trier par date
+                </a>
+
+                <a href="{{ route('knowledge.index', ['sort' => $order === 'asc' ? 'desc' : 'asc', 'sort_by' => 'id']) }}"
+                class="inline-block !bg-teal-500 !text-white text-sm px-4 py-2 rounded-lg shadow hover:scale-105 transform transition duration-300">
+                    Trier par ID
+                </a>
+            </div>
         </div>
 
         <hr>

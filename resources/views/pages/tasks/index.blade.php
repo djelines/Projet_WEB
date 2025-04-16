@@ -19,22 +19,34 @@
 
             </div>
             <!-- Button for sorting by date (toggle ascending/descending) -->
-            <form action="{{ route('tasks.index') }}" method="GET" class="inline flex flex-row items-end justify-end mt-6 mb-4 gap-4">
-                <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
-                <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
-                    Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
-                </button>
-                @can('viewHistory', App\Models\Task::class)
-                    <a href="{{ route('tasks.history') }}" class="bg-violet-500 hover:bg-violet-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">Voir mon historique</a>
-                @endcan
-                @can('viewCompletedByStudents', App\Models\Task::class)
-                    <a href="{{ route('tasks.completedByStudents') }}" class="bg-green-500 hover:!bg-green-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
-                        Voir les élèves ayant complété les tâches
-                    </a>
-                @endcan
+            <form action="{{ route('tasks.index') }}" method="GET" class="flex justify-between items-center mt-6 mb-4 gap-4">
+                <!-- Barre de recherche à gauche -->
+                <div class="flex items-center gap-2">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher une tâche..." class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="!bg-slate-500 hover:!bg-slate-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
+                        Rechercher
+                    </button>
+                </div>
 
-
+                <!-- Boutons à droite -->
+                <div class="flex items-center gap-2">
+                    <input type="hidden" name="sort" value="{{ request('sort', 'asc') === 'asc' ? 'desc' : 'asc' }}">
+                    <button type="submit" class="!bg-blue-500 hover:!bg-blue-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
+                        Trier par date ({{ request('sort', 'asc') === 'asc' ? 'ascendant' : 'descendant' }})
+                    </button>
+                    
+                    @can('viewHistory', App\Models\Task::class)
+                        <a href="{{ route('tasks.history') }}" class="bg-violet-500 hover:bg-violet-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">Voir mon historique</a>
+                    @endcan
+                    
+                    @can('viewCompletedByStudents', App\Models\Task::class)
+                        <a href="{{ route('tasks.completedByStudents') }}" class="bg-green-500 hover:!bg-green-700 !text-white px-4 py-2 rounded-lg text-sm transition duration-300 ease-in-out">
+                            Voir les élèves ayant complété les tâches
+                        </a>
+                    @endcan
+                </div>
             </form>
+
 
             <hr>
             @if(session('success'))

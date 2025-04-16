@@ -8,7 +8,7 @@
 
     <div class="max-w-6xl mx-auto mt-12 px-4 sm:px-6 lg:px-8">
     <div class="text-center">
-        <h2 class="text-3xl font-bold text-indigo-800 mb-2">Historique des résultats</h2>
+        <h2 class="text-3xl font-bold text-indigo-800 mb-2 uppercase">Historique des résultats</h2>
     </div>
 
     <div class="mt-10 bg-white shadow-xl rounded-xl overflow-hidden border border-gray-200">
@@ -28,7 +28,7 @@
                         {{ $result->user->first_name }} {{ $result->user->last_name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-indigo-700 font-semibold">
-                        {{ $result->score }} / {{ $assessment->num_questions }}
+                    {{ number_format(($result->score  / $assessment->num_questions) * 20, 2) }} / 20
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600">
                         {{ $result->created_at->format('d/m/Y H:i') }}
@@ -53,12 +53,25 @@
 </div>
 
 
-    <div class="mt-8 text-center">
-        <a href="{{ route('knowledge.show', $assessment->id) }}"
-           class="inline-block bg-pink-600 hover:bg-pink-700 !text-white px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md transition transform hover:scale-105">
-            Revenir au QCM
-        </a>
-    </div>
+<div class="mt-8 flex justify-between mr-5 ml-5">
+    <a href="{{ route('knowledge.show', $assessment->id) }}"
+       class="inline-block bg-pink-600 hover:bg-pink-700 !text-white px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md transition transform hover:scale-105">
+        Revenir au QCM
+    </a>
+    <a href="{{ route('knowledge.downloadResults', $assessment->id) }}"
+   id="download-pdf"
+   data-url="{{ route('knowledge.downloadResults', $assessment->id) }}"
+   class="inline-block bg-green-600 hover:bg-green-700 !text-white px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md transition transform hover:scale-105">
+   Télécharger les résultats (PDF)
+</a>
+
 </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Charger le fichier compilé app.js -->
+<script src="{{ mix('js/app.js') }}"></script>
+
 
 </x-app-layout>

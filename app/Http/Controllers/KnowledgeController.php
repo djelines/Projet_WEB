@@ -12,14 +12,17 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AssessmentResult;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cohort;
 use App\Http\Requests\StoreAssessmentRequest;
 use App\Http\Requests\SubmitAssessmentRequest;
 use App\Http\Requests\IndexAssessmentRequest;
 
+
 class KnowledgeController extends Controller
 {
     use AuthorizesRequests;
+    
     
     /**
      * Displays the skills assessment page from the database.
@@ -29,21 +32,31 @@ class KnowledgeController extends Controller
         // Retrieve the validated parameters
         $order = $request->get("sort", "desc"); // Default sorting: from newest to oldest
         $sortBy = $request->get("sort_by", "created_at"); // Default sorting by created_at
+        $search = $request->get('search');
 
         // Retrieve the cohort id of the connected user via the pivot table
         $userCohortIds = auth()->user()->cohorts->pluck('id');
 
-
         // Apply sorting and filtering to the correct field and cohort of the logged-in user
-        $assessments = Assessment::whereIn("cohort_id", $userCohortIds)
-        ->orderBy($sortBy, $order)
-        ->paginate(6); // Use pagination
+        $query = Assessment::whereIn("cohort_id", $userCohortIds);
 
-        return view(
-            "pages.knowledge.index",
-            compact("assessments", "order", "sortBy")
-        );
+        // filtrer les bilans contenant ce mot dans : l’ID du bilan, les langages (JSON array), le prénom / nom du créateur.
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where("id", "like", "%{$search}%")
+                ->orWhereJsonContains('languages', $search)
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $assessments = $query->orderBy($sortBy, $order)->paginate(6);
+
+        return view("pages.knowledge.index", compact("assessments", "order", "sortBy", "search"));
     }
+
 
     /**
      * Displays the balance sheet creation form
@@ -312,4 +325,22 @@ class KnowledgeController extends Controller
             compact("assessment", "results")
         );
     }
+
+   
+
+    public function downloadResults($id)
+    {
+        $assessment = Assessment::findOrFail($id);
+        $this->authorize("viewHistory", $assessment);
+
+        $results = AssessmentResult::with("user")
+            ->where("assessment_id", $assessment->id)
+            ->orderByDesc("created_at")
+            ->get();
+
+        $pdf = Pdf::loadView('pages.knowledge.assessmentPdf', compact('assessment', 'results'));
+
+        return $pdf->download('resultats_bilan_'.$assessment->id.'.pdf');
+    }
+
 }

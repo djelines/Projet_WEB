@@ -49,8 +49,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/knowledge/result/{id}', [KnowledgeController::class, 'result'])->name('knowledge.result');
         Route::get('/knowledge/{assessment}/history', [KnowledgeController::class, 'history'])
             ->name('knowledge.history'); 
-            Route::get('/knowledge/result/{id}', [KnowledgeController::class, 'result'])->name('knowledge.result');
-
+        Route::get('/knowledge/result/{id}', [KnowledgeController::class, 'result'])->name('knowledge.result');
+        Route::get('/knowledge/{id}/download-results', [KnowledgeController::class, 'downloadResults'])
+            ->name('knowledge.downloadResults');
+        
 
 
 

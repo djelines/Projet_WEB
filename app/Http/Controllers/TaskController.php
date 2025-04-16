@@ -17,30 +17,34 @@ class TaskController extends Controller
      * Blade page which leads to the modifications page
      */
     public function index(Request $request)
-    {
-        $sortOrder = $request->get("sort", "asc");
-        $user = auth()->user();
-        $userRole = $user->school()->pivot->role;
+{
+    $sortOrder = $request->get("sort", "asc");
+    $search = $request->get("search");
+    $user = auth()->user();
+    $userRole = $user->school()->pivot->role;
 
-        if ($userRole === "student") {
-            // Retrieve the cohort(s) associated with the student
-            $studentCohorts = $user->cohorts->pluck("id");
+    $query = Task::query();
 
-             // Filter tasks linked to the student's cohorts
-            $tasks = Task::whereHas("cohorts", function ($query) use (
-                $studentCohorts
-            ) {
-                $query->whereIn("cohort_id", $studentCohorts);
-            })
-                ->orderBy("created_at", $sortOrder)
-                ->paginate(9);
-        } else {
-             // For other roles: retrieve all tasks
-            $tasks = Task::orderBy("created_at", $sortOrder)->paginate(9);
-        }
-
-        return view("pages.tasks.index", compact("tasks"));
+    if ($userRole === "student") {
+        $studentCohorts = $user->cohorts->pluck("id");
+        $query->whereHas("cohorts", function ($q) use ($studentCohorts) {
+            $q->whereIn("cohort_id", $studentCohorts);
+        });
     }
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where("title", "like", "%$search%")
+              ->orWhere("description", "like", "%$search%")
+              ->orWhere("category", "like", "%$search%");
+        });
+    }
+
+    $tasks = $query->orderBy("created_at", $sortOrder)->paginate(9)->withQueryString();
+
+    return view("pages.tasks.index", compact("tasks"));
+}
+
 
     /**
      * Show the form for creating a new resource.

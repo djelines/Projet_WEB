@@ -86,7 +86,7 @@
     <!-- Charger le CDN de SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Charger le fichier compilé app.js (avec ton script personnalisé) -->
+    <!-- Charger le fichier compilé app.js -->
     <script src="{{ mix('js/app.js') }}"></script>
 
 
