@@ -1,5 +1,6 @@
 import './bootstrap';
 import './sweetAlert';  
+import './easter'; 
 
 import Alpine from 'alpinejs';
 

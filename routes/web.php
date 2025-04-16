@@ -88,6 +88,12 @@ Route::middleware('auth')->group(function () {
         Route::patch('/tasks/{task}/complete', [TaskController::class, 'markAsCompleted'])
             ->middleware('can:point,App\Models\Task')
             ->name('tasks.complete');
+
+        // Easter Egg
+        Route::get('/easter-egg', function () {
+            return view('pages.easter-egg');
+        });
+        
     });
 
 });

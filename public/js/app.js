@@ -10441,12 +10441,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 /* harmony import */ var _sweetAlert__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sweetAlert */ "./resources/js/sweetAlert.js");
 /* harmony import */ var _sweetAlert__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sweetAlert__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
+/* harmony import */ var _easter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./easter */ "./resources/js/easter.js");
+/* harmony import */ var _easter__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_easter__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
 
 
 
-window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_2__["default"];
-alpinejs__WEBPACK_IMPORTED_MODULE_2__["default"].start();
+
+window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_3__["default"];
+alpinejs__WEBPACK_IMPORTED_MODULE_3__["default"].start();
 
 /***/ }),
 
@@ -10465,58 +10468,148 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/easter.js":
+/*!********************************!*\
+  !*** ./resources/js/easter.js ***!
+  \********************************/
+/***/ (() => {
+
+var gameArea = document.getElementById('game-area');
+var scoreDisplay = document.getElementById('score');
+var timerDisplay = document.getElementById('timer');
+var missedDisplay = document.getElementById('missed');
+var score = 0;
+var missed = 0;
+var time = 0;
+var gameInterval;
+var imageUrl = '/images/python.png'; // URL directe à l'image dans le dossier public
+
+function spawnBug() {
+  var bug = document.createElement('div');
+  bug.classList.add('bug');
+  var size = Math.random() * 20 + 30; // 30px - 50px
+  var x = Math.random() * (gameArea.offsetWidth - size);
+  var y = Math.random() * (gameArea.offsetHeight - size);
+
+  // Utilisation de l'URL directe
+  Object.assign(bug.style, {
+    width: "".concat(size, "px"),
+    height: "".concat(size, "px"),
+    position: 'absolute',
+    top: "".concat(y, "px"),
+    left: "".concat(x, "px"),
+    backgroundImage: "url(".concat(imageUrl, ")"),
+    // Utilisation de l'URL directe
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    cursor: 'pointer',
+    transition: 'transform 0.1s',
+    zIndex: 10
+  });
+  bug.addEventListener('click', function () {
+    score++;
+    scoreDisplay.textContent = "Score : " + score;
+    bug.remove();
+  });
+  gameArea.appendChild(bug);
+  setTimeout(function () {
+    if (bug.parentNode) {
+      bug.remove();
+      missed++; // Incrémentation des cibles ratées
+      missedDisplay.textContent = "Manqué : " + missed;
+    }
+  }, 1500);
+}
+function updateTimer() {
+  time++;
+  var minutes = Math.floor(time / 60);
+  var seconds = time % 60;
+  timerDisplay.textContent = "Temps : ".concat(minutes < 10 ? '0' : '').concat(minutes, ":").concat(seconds < 10 ? '0' : '').concat(seconds);
+}
+function startGame() {
+  gameInterval = setInterval(spawnBug, 800); // Créer une cible toutes les 800ms
+  setInterval(updateTimer, 1000); // Mettre à jour le chrono toutes les secondes
+}
+startGame();
+
+/***/ }),
+
 /***/ "./resources/js/sweetAlert.js":
 /*!************************************!*\
   !*** ./resources/js/sweetAlert.js ***!
   \************************************/
 /***/ (() => {
 
-// sweetalert-loader.js
-
+// Wait until the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
+  // Get the form element by its ID
   var form = document.getElementById('formConfirm');
+
+  // If the form exists on the page
   if (form) {
+    // Listen for the form submission event
     form.addEventListener('submit', function (e) {
+      // Show a SweetAlert modal when the form is submitted
       Swal.fire({
-        title: 'Génération du QCM en cours...',
-        html: 'Cela peut prendre quelques secondes. Merci de patienter.',
+        title: 'Generating the quiz...',
+        html: 'This may take a few seconds. Please wait.',
         allowOutsideClick: false,
+        // Prevent the user from closing the alert by clicking outside
         background: '#fff',
+        // Set background color
         customClass: {
           popup: '!border !border-pink-300 !rounded-xl !shadow-md',
+          // Custom popup styling
           title: '!text-pink-400 !text-2xl !font-bold',
-          htmlContainer: '!text-gray-700 !text-base !mt-2'
+          // Custom title styling
+          htmlContainer: '!text-gray-700 !text-base !mt-2' // Custom content text styling
         },
         didOpen: function didOpen() {
+          // Show a loading spinner while the modal is open
           Swal.showLoading();
         }
       });
     });
   }
 });
+
+// Wait until the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
+  // Get the download button element by its ID
   var downloadBtn = document.getElementById('download-pdf');
+
+  // If the download button exists on the page
   if (downloadBtn) {
+    // Listen for the click event on the download button
     downloadBtn.addEventListener('click', function (e) {
-      e.preventDefault();
+      e.preventDefault(); // Prevent the default link behavior
+
+      // Show a SweetAlert modal during the PDF generation
       Swal.fire({
-        title: 'Téléchargement en cours...',
-        text: "Le PDF est en cours de génération. Cela peut prendre quelques secondes.",
+        title: 'Downloading...',
+        text: "The PDF is being generated. This may take a few seconds.",
         icon: 'info',
+        // Info icon for user feedback
         showCancelButton: false,
         showConfirmButton: false,
         timer: 2000,
+        // Auto-close the alert after 2 seconds
         customClass: {
           popup: 'border-[3px] border-indigo-600 shadow-lg rounded-xl bg-white',
+          // Custom popup style
           title: 'text-indigo-700 font-semibold text-lg',
+          // Custom title style
           htmlContainer: 'text-gray-600 text-sm',
-          icon: 'text-indigo-500'
+          // Custom content text style
+          icon: 'text-indigo-500' // Custom icon color
         },
         didOpen: function didOpen() {
+          // Add a glowing shadow effect to the modal
           var popup = document.querySelector('.swal2-popup');
           popup.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.4)';
         },
         willClose: function willClose() {
+          // Redirect the user to the PDF download URL after the alert closes
           window.location.href = downloadBtn.getAttribute('href');
         }
       });
