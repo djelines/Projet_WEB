@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -90,12 +90,16 @@ class User extends Authenticatable
     }
 
     /**
-     * Relation One-to-Many avec assessments (évaluations)
+     * Relation One-to-Many with assessments 
      */
     public function assessments()
     {
         return $this->hasMany(Assessment::class);
     }
+
+    /**
+     * Relation Many-to-Many with cohort
+     */
 
     public function cohorts()
     {
