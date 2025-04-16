@@ -1,8 +1,8 @@
 <x-app-layout>
-    <!-- En-tête de la page : Bilans de connaissances -->
+    <!-- En-tête de la page -->
     <x-slot name="header">
         <h1 class="flex items-center gap-2 text-xl font-semibold text-gray-800">
-            <span class="text-pink-600">{{ __('Bilans de connaissances') }}</span>
+            <span class="text-pink-600">{{ __('Bilan de compétence généré') }}</span>
         </h1>
     </x-slot>
     
@@ -17,31 +17,31 @@
         <h2 class="text-xl font-semibold text-sky-900 mb-6 mt-2">Résultat de l'évaluation</h2>
 
         <!-- Cartes individuelles pour les détails du bilan -->
-        <div class="flex flex-wrap gap-4 text-gray-800 mt-2">
-            <!-- Langages évalués -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Langages évalués</span>
-                <p class="text-sm">{{ implode(', ', $assessment->languages) }}</p>
-            </div>
+<div class="flex flex-wrap gap-4 text-gray-800 mt-2">
+    <!-- Langages évalués -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-red-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Langages évalués</span>
+        <p class="text-sm">{{ implode(', ', $assessment->languages) }}</p>
+    </div>
 
-            <!-- Nombre de bonnes réponses -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Bonnes réponses</span>
-                <p class="text-sm">{{ $score }} sur {{ $assessment->num_questions }}</p>
-            </div>
+    <!-- Nombre de bonnes réponses -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-rose-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Bonnes réponses</span>
+        <p class="text-sm">{{ $score }} sur {{ $assessment->num_questions }}</p>
+    </div>
 
-            <!-- Nombre de mauvaises réponses -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Mauvaises réponses</span>
-                <p class="text-sm">{{ $assessment->num_questions - $score }}</p>
-            </div>
+    <!-- Nombre de mauvaises réponses -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-pink-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Mauvaises réponses</span>
+        <p class="text-sm">{{ $assessment->num_questions - $score }}</p>
+    </div>
 
-            <!-- Note finale sur 20 -->
-            <div class="flex-1 min-w-[180px] max-w-sm bg-fuchsia-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
-                <span class="block text-sm font-semibold text-gray-600">Note Finale</span>
-                <p class="text-sm">{{ number_format(($score / $assessment->num_questions) * 20, 2) }} / 20</p>
-            </div>
-        </div>
+    <!-- Note finale sur 20 -->
+    <div class="flex-1 min-w-[180px] max-w-sm bg-fuchsia-50 dark:bg-[--tw-page-bg-dark] border rounded-md p-3 shadow-sm">
+        <span class="block text-sm font-semibold text-gray-600">Note Finale</span>
+        <p class="text-sm">{{ number_format(($score / $assessment->num_questions) * 20, 2) }} / 20</p>
+    </div>
+</div>
 
     </div>
 
@@ -70,37 +70,22 @@
                 </table>
             </div>
 
-                <!-- Actions -->
-                <div class="flex justify-center gap-3 mt-2 mb-4 px-6">
-                    @can('view', $assessment) @if(auth()->user()->school()->pivot->role === 'student')
-                    <!-- Vérification si l'étudiant a déjà répondu au QCM -->
-                    @php $alreadyDone = \App\Models\AssessmentResult::where('assessment_id', $assessment->id) ->where('user_id', auth()->id()) ->whereNotNull('score') // Vérifie si un score existe ->exists(); @endphp @if($alreadyDone)
-                    <!-- Message "Déjà fait" si l'étudiant a déjà passé le QCM -->
-                    <p class="text-green-700 font-semibold">Déjà fait</p>
-                    @else
-                    <!-- Bouton pour faire le QCM si ce n'est pas fait -->
-                    <a href="{{ route('knowledge.show', $assessment->id) }}#qcm-start" class="bg-green-700 hover:bg-green-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                        Faire le QCM
-                    </a> @endif @else
-                    <!-- Bouton pour l'admin -->
-                    <a href="{{ route('knowledge.show', $assessment->id) }}" class="bg-blue-700 hover:bg-blue-800 !text-white px-4 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                        Voir le QCM
-                    </a> @endif @endcan @can('delete', $assessment)
-                    <form action="{{ route('knowledge.destroy', $assessment->id) }}" method="POST" onsubmit="return confirm('Supprimer ce bilan ?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="!bg-red-800 !text-white px-4 py-2 rounded-md hover:!bg-red-900 text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
-                            Supprimer
-                        </button>
-                    </form>
-                    @endcan
-                </div>
+            <div class="mt-6 text-center">
+                @if(auth()->user()->school()->pivot->role === 'student')
+                    <!-- Retour pour l'étudiant -->
+                    <a href="{{ route('knowledge.index') }}" 
+                    class="bg-indigo-800 hover:bg-indigo-900 !text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                        Retour aux évaluations
+                    </a>
+                @else
+                    <!-- Retour pour l'admin -->
+                    <a href="{{ route('knowledge.history', $assessment->id) }}" 
+                    class="bg-indigo-800 hover:bg-indigo-900 !text-white px-6 py-2 rounded-md text-sm font-semibold transition duration-300 ease-in-out transform hover:scale-105">
+                        Retour à l'historique
+                    </a>
+                @endif
             </div>
-            @endforeach
-        </div>
-        @endif
 
-        <div class="pt-5 px-4">
-            {{ $assessments->links() }}
         </div>
     </div>
 </x-app-layout>
