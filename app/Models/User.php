@@ -70,9 +70,6 @@ class User extends Authenticatable
 
     /**
      * Retrieve the school of the user
-     */
-
-    /**
      * @return (Model&object)|null
      */
     public function school() {
@@ -80,5 +77,28 @@ class User extends Authenticatable
         return $this->belongsToMany(School::class, 'users_schools')
             ->withPivot('role')
             ->first();
+    }
+
+    /**
+     * Relation Many-to-Many with tasks
+     */ 
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+                    ->withPivot('completed', 'comment')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relation One-to-Many avec assessments (évaluations)
+     */
+    public function assessments()
+    {
+        return $this->hasMany(Assessment::class);
+    }
+
+    public function cohorts()
+    {
+        return $this->belongsToMany(Cohort::class, 'cohort_user');
     }
 }

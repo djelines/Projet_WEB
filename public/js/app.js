@@ -10439,11 +10439,14 @@ process.umask = function() { return 0; };
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bootstrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
+/* harmony import */ var _sweetAlert__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sweetAlert */ "./resources/js/sweetAlert.js");
+/* harmony import */ var _sweetAlert__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sweetAlert__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
 
 
-window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_1__["default"];
-alpinejs__WEBPACK_IMPORTED_MODULE_1__["default"].start();
+
+window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_2__["default"];
+alpinejs__WEBPACK_IMPORTED_MODULE_2__["default"].start();
 
 /***/ }),
 
@@ -10459,6 +10462,67 @@ __webpack_require__.r(__webpack_exports__);
 
 window.axios = axios__WEBPACK_IMPORTED_MODULE_0__["default"];
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+/***/ }),
+
+/***/ "./resources/js/sweetAlert.js":
+/*!************************************!*\
+  !*** ./resources/js/sweetAlert.js ***!
+  \************************************/
+/***/ (() => {
+
+// sweetalert-loader.js
+
+document.addEventListener('DOMContentLoaded', function () {
+  var form = document.getElementById('formConfirm');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      Swal.fire({
+        title: 'Génération du QCM en cours...',
+        html: 'Cela peut prendre quelques secondes. Merci de patienter.',
+        allowOutsideClick: false,
+        background: '#fff',
+        customClass: {
+          popup: '!border !border-pink-300 !rounded-xl !shadow-md',
+          title: '!text-pink-400 !text-2xl !font-bold',
+          htmlContainer: '!text-gray-700 !text-base !mt-2'
+        },
+        didOpen: function didOpen() {
+          Swal.showLoading();
+        }
+      });
+    });
+  }
+});
+document.addEventListener('DOMContentLoaded', function () {
+  var downloadBtn = document.getElementById('download-pdf');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      Swal.fire({
+        title: 'Téléchargement en cours...',
+        text: "Le PDF est en cours de génération. Cela peut prendre quelques secondes.",
+        icon: 'info',
+        showCancelButton: false,
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: {
+          popup: 'border-[3px] border-indigo-600 shadow-lg rounded-xl bg-white',
+          title: 'text-indigo-700 font-semibold text-lg',
+          htmlContainer: 'text-gray-600 text-sm',
+          icon: 'text-indigo-500'
+        },
+        didOpen: function didOpen() {
+          var popup = document.querySelector('.swal2-popup');
+          popup.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.4)';
+        },
+        willClose: function willClose() {
+          window.location.href = downloadBtn.getAttribute('href');
+        }
+      });
+    });
+  }
+});
 
 /***/ }),
 
@@ -10534,6 +10598,18 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	
