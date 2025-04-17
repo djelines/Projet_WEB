@@ -1,69 +1,86 @@
-# 🚀 Coding Tool Box – Guide d'installation
+# 🚀 Coding Tool Box – Guide d’installation & Présentation
 
-Bienvenue dans **Coding Tool Box**, un outil complet de gestion pédagogique conçu pour la Coding Factory.  
-Ce projet Laravel inclut la gestion des groupes, promotions, étudiants, rétro (Kanban), QCM  dynamiques, et bien plus.
+Bienvenue dans **Coding Tool Box**, une plateforme pédagogique tout-en-un conçue pour la **Coding Factory**.  
+Ce projet Laravel inclut la gestion des groupes, promotions, étudiants, rétro (Kanban), QCM dynamiques, et bien plus.
+
+---
+
+## 🧩 Modules intégrés
+
+### 🛠️ Vie Commune  
+Gérez les responsabilités partagées entre étudiants.
+
+- 👩‍🏫 **Admin** : crée, modifie, supprime les tâches + les assigne aux promotions  
+- 👨‍🎓 **Étudiants** : valident les tâches + laissent un commentaire  
+- 📜 **Historique** : suivi personnel des tâches accomplies
+
+
+### 🧠 Bilans de Compétence IA  
+Évaluez les connaissances en dev grâce à des QCM générés automatiquement.
+
+- 🧑‍🏫 **Admin** : crée des bilans par langage, difficulté, nombre de questions + attribution aux promotions  
+- 🧑‍🎓 **Étudiants** : répondent aux bilans assignés, une seule tentative, note affichée à la fin
 
 ---
 
 ## 📦 Prérequis
 
-Assurez-vous d’avoir les éléments suivants installés sur votre machine :
+Assurez-vous d’avoir les éléments suivants installés :
 
-- PHP ≥ 8.1
-- Composer
-- MySQL ou MariaDB
-- Node.js + npm (pour les assets frontend si nécessaire)
-- Laravel CLI (`composer global require laravel/installer`)
+- PHP ≥ 8.1  
+- Composer  
+- MySQL  
+- Node.js + npm (pour le frontend)  
+- Laravel CLI :  
+  ```bash
+  composer global require laravel/installer
+  ```
 
 ---
 
-## ⚙️ Installation du projet
+## ⚙️ Installation
 
-Exécutez les étapes ci-dessous pour lancer le projet en local :
-
-### 1. Cloner le dépôt
+### 1. Cloner le projet
 
 ```bash
-git clone https://m_thibaud@bitbucket.org/m_thibaud/projet-web-2025.git
-cd coding-tool-box
+git clone https://d@bitbucket.org/djelines/Projet_WEB.git 
+cd Projet_WEB
 cp .env.example .env
 ```
 
-### 2. Configuration de l'environnement
+### 2. Configuration du fichier `.env`
 
-```bash
-✍️ Ouvrez le fichier .env et configurez les paramètres liés à votre base de données :
-
+```dotenv
 DB_DATABASE=nom_de_votre_bdd
 DB_USERNAME=utilisateur
 DB_PASSWORD=motdepasse
 ```
 
-### 3. Installation des dépendances PHP
+### 3. Installation des dépendances
 
 ```bash
 composer install
 ```
 
-### 4. Nettoyage et optimisation du cache
+### 4. Nettoyage du cache & optimisation
 
 ```bash
 php artisan optimize:clear
 ```
 
-### 5. Génération de la clé d'application
+### 5. Génération de la clé d’application
 
 ```bash
 php artisan key:generate
 ```
 
-### 6. Migration de la base de données
+### 6. Lancement des migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 7. Population de la base (Données de test)
+### 7. (Optionnel) Remplissage avec des données de test
 
 ```bash
 php artisan db:seed
@@ -71,7 +88,7 @@ php artisan db:seed
 
 ---
 
-## 💻 Compilation des assets (si nécessaire)
+## 💻 Compilation des assets frontend
 
 ```bash
 npm install
@@ -80,21 +97,51 @@ npm run dev
 
 ---
 
-## 👤 Comptes de test disponibles
+## 👥 Comptes de test
 
-| Rôle       | Email                         | Mot de passe |
-|------------|-------------------------------|--------------|
-| **Admin**  | admin@codingfactory.com       | 123456       |
-| Enseignant | teacher@codingfactory.com     | 123456       |
-| Étudiant   | student@codingfactory.com     | 123456       |
+| Rôle       | Email                         | Mot de passe | Promo  |
+|------------|-------------------------------|--------------|--------|
+| **Admin**  | admin@codingfactory.com       | 123456       | 1 et 2 |
+| Enseignant | teacher@codingfactory.com     | 123456       | 1      |
+| Étudiant   | student@codingfactory.com     | 123456       | 1      |
+| Étudiant 2 | student2@codingfactory.com    | 123456       | 2      |
 
 ---
 
-## 🚧 Fonctionnalités principales
+## ✅ User Stories (toutes implémentées)
 
-- 🔧 Gestion des groupes, promotions, étudiants
-- 📅 Vie commune avec système de pointage
-- 📊 Bilans semestriels étudiants via QCM générés par IA
-- 🧠 Génération automatique de QCM par langage sélectionné
-- ✅ Système de Kanban pour les rétrospectives
-- 📈 Statistiques d’usage et suivi pédagogique
+### Vie Commune
+
+- [x] Admin : création, modification, suppression de tâches
+- [x] Attribution à une ou plusieurs promotions
+- [x] Étudiant : pointage et commentaire
+- [x] Historique des tâches effectuées
+
+### Bilans de Compétence
+
+- [x] Admin : génération automatique via IA
+- [x] Stockage en base de données
+- [x] Attribution aux promotions
+- [x] Étudiant : accès restreint, réponse unique, notation instantanée
+
+---
+
+## ✨ Fonctionnalités bonus
+
+- 🎨 Thème **Dark mode** (ajusté sur tous les modules)
+- 📷 Affichage d'une **image illustrant l'absence de données**
+- 🎯 Couleurs dynamiques des tâches selon leur **catégorie**
+- ✅ Messages de **succès / erreur** clairs
+- 🔢 **Pagination** sur les tâches & bilans
+- 🗓️ **Filtres** par date et ID
+- 🔍 **Barre de recherche globale**
+- 📊 **Historique détaillé** des tâches par étudiant (côté admin)
+- 🌍 Encodage **UTF-8 (Europe/France)**
+- 🛑 **Confirmation** avant suppression de QCM
+
+---
+
+## 🧑‍💻 Auteurs
+
+- 👩‍💻 [Inès Charfi](https://github.com/djelines)
+- 👨‍💻 [Thibaud Magniez](https://bitbucket.org/m_thibaud/projet-web-2025)
