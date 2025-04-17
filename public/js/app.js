@@ -10474,24 +10474,39 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   \********************************/
 /***/ (() => {
 
+// Get references to HTML elements for the game area and displays
 var gameArea = document.getElementById('game-area');
 var scoreDisplay = document.getElementById('score');
 var timerDisplay = document.getElementById('timer');
 var missedDisplay = document.getElementById('missed');
+
+// Initialize game variables
 var score = 0;
 var missed = 0;
 var time = 0;
 var gameInterval;
-var imageUrl = '/images/python.png'; // URL directe à l'image dans le dossier public
+var timerInterval;
 
+// Path to the image used for the bugs
+var imageUrl = '/images/python.png';
+
+// Starts the game: spawns bugs and starts the timer
+function startGame() {
+  gameInterval = setInterval(spawnBug, 800); // Create a bug every 800ms
+  timerInterval = setInterval(updateTimer, 1000); // Update timer every second
+}
+
+// Creates and displays a bug in a random position
 function spawnBug() {
   var bug = document.createElement('div');
   bug.classList.add('bug');
-  var size = Math.random() * 20 + 30; // 30px - 50px
+
+  // Set random size and position for the bug
+  var size = Math.random() * 20 + 30;
   var x = Math.random() * (gameArea.offsetWidth - size);
   var y = Math.random() * (gameArea.offsetHeight - size);
 
-  // Utilisation de l'URL directe
+  // Style the bug element
   Object.assign(bug.style, {
     width: "".concat(size, "px"),
     height: "".concat(size, "px"),
@@ -10499,37 +10514,60 @@ function spawnBug() {
     top: "".concat(y, "px"),
     left: "".concat(x, "px"),
     backgroundImage: "url(".concat(imageUrl, ")"),
-    // Utilisation de l'URL directe
     backgroundSize: 'contain',
     backgroundRepeat: 'no-repeat',
     cursor: 'pointer',
     transition: 'transform 0.1s',
     zIndex: 10
   });
+
+  // When the user clicks the bug: increase score and remove it
   bug.addEventListener('click', function () {
     score++;
     scoreDisplay.textContent = "Score : " + score;
     bug.remove();
   });
+
+  // Add the bug to the game area
   gameArea.appendChild(bug);
+
+  // If not clicked within 1.5 seconds, consider it missed
   setTimeout(function () {
     if (bug.parentNode) {
       bug.remove();
-      missed++; // Incrémentation des cibles ratées
-      missedDisplay.textContent = "Manqué : " + missed;
+      missed++;
+      missedDisplay.textContent = "Missed : " + missed;
+
+      // End the game if 5 bugs are missed
+      if (missed >= 5) {
+        endGame();
+      }
     }
   }, 1500);
 }
+
+// Updates the game timer every second
 function updateTimer() {
   time++;
   var minutes = Math.floor(time / 60);
   var seconds = time % 60;
-  timerDisplay.textContent = "Temps : ".concat(minutes < 10 ? '0' : '').concat(minutes, ":").concat(seconds < 10 ? '0' : '').concat(seconds);
+  timerDisplay.textContent = "Time : ".concat(minutes < 10 ? '0' : '').concat(minutes, ":").concat(seconds < 10 ? '0' : '').concat(seconds);
 }
-function startGame() {
-  gameInterval = setInterval(spawnBug, 800); // Créer une cible toutes les 800ms
-  setInterval(updateTimer, 1000); // Mettre à jour le chrono toutes les secondes
+
+// Stops the game and displays the final score and time
+function endGame() {
+  clearInterval(gameInterval); // Stop spawning bugs
+  clearInterval(timerInterval); // Stop the timer
+
+  // Show final score and time
+  document.getElementById('final-score').textContent = "Score : " + score;
+  document.getElementById('final-time').textContent = timerDisplay.textContent;
+
+  // Display the game over popup
+  document.getElementById('game-over-popup').classList.remove('hidden');
 }
+
+// Launch the game as soon as the script loads
 startGame();
 
 /***/ }),

@@ -92,7 +92,8 @@ Route::middleware('auth')->group(function () {
         // Easter Egg
         Route::get('/easter-egg', function () {
             return view('pages.easter-egg');
-        });
+        })->name('easter-egg');
+        
         
     });
 
