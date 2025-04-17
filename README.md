@@ -10,20 +10,18 @@ Ce projet Laravel inclut la gestion des groupes, promotions, étudiants, rétro 
 ### 🛠️ Vie Commune  
 Gérez les responsabilités partagées entre étudiants.
 
-- 👩‍🏫 **Admin** : crée, modifie, supprime les tâches + les assigne aux promotions  
-- 👨‍🎓 **Étudiants** : valident les tâches + laissent un commentaire  
-- 📜 **Historique** : suivi personnel des tâches accomplies
-
-
 ### 🧠 Bilans de Compétence IA  
 Évaluez les connaissances en dev grâce à des QCM générés automatiquement.
-
-- 🧑‍🏫 **Admin** : crée des bilans par langage, difficulté, nombre de questions + attribution aux promotions  
-- 🧑‍🎓 **Étudiants** : répondent aux bilans assignés, une seule tentative, note affichée à la fin
 
 ---
 
 ## 📦 Prérequis
+![Made with Laravel](https://img.shields.io/badge/Made%20with-Laravel-red?style=for-the-badge&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.3-blue?style=for-the-badge&logo=php)
+![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-red?style=for-the-badge&logo=laravel)
+
 
 Assurez-vous d’avoir les éléments suivants installés :
 
@@ -43,7 +41,7 @@ Assurez-vous d’avoir les éléments suivants installés :
 ### 1. Cloner le projet
 
 ```bash
-git clone https://d@bitbucket.org/djelines/Projet_WEB.git 
+git clone https://github.com/djelines/Projet_WEB.git
 cd Projet_WEB
 cp .env.example .env
 ```
@@ -80,7 +78,7 @@ php artisan key:generate
 php artisan migrate
 ```
 
-### 7. (Optionnel) Remplissage avec des données de test
+### 7. Remplissage avec des données de test
 
 ```bash
 php artisan db:seed
@@ -138,6 +136,8 @@ npm run dev
 - 📊 **Historique détaillé** des tâches par étudiant (côté admin)
 - 🌍 Encodage **UTF-8 (Europe/France)**
 - 🛑 **Confirmation** avant suppression de QCM
+- 🐛 **Easter Egg** : disponible à l’adresse [`/easter-egg`](http://127.0.0.1:8000/easter-egg) en local
+
 
 ---
 
