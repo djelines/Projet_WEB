@@ -150,7 +150,9 @@
 </div>
 
 <footer>
-    Rapport généré automatiquement le {{ now()->format('d/m/Y à H:i') }} – Plateforme CodingToolBox – Usage interne ESIEE-IT
+    Rapport généré automatiquement le {{ now()->format('d/m/Y à H:i') }} – Plateforme CodingToolBox – Usage interne ESIEE-IT 
+    <br>
+    Merci Matéis pour l'idée !
 </footer>
 
 </body>

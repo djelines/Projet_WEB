@@ -136,6 +136,8 @@ npm run dev
 - 📊 **Historique détaillé** des tâches par étudiant (côté admin)
 - 🌍 Encodage **UTF-8 (Europe/France)**
 - 🛑 **Confirmation** avant suppression de QCM
+- 📝 **Téléchargement** des résultats en format **PDF**
+- ⌛ Ajout d'une **pop up** pendant le téléchargement  
 - 🐛 **Easter Egg** : disponible à l’adresse [`/easter-egg`](http://127.0.0.1:8000/easter-egg) en local
 
 
