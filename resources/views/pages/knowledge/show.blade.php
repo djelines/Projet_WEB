@@ -72,7 +72,7 @@
                     @endforeach
                 </ul>
                 <div class="mt-4 text-sm text-lime-800 font-semibold">
-                    Correct answer: <span class="italic">{{ $question['correct_answer'] }}</span>
+                    Réponse correcte : <span class="italic">{{ $question['correct_answer'] }}</span>
                 </div>
             </div>
             @endforeach

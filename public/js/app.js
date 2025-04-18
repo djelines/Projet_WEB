@@ -10589,8 +10589,8 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       // Show a SweetAlert modal when the form is submitted
       Swal.fire({
-        title: 'Generating the quiz...',
-        html: 'This may take a few seconds. Please wait.',
+        title: 'Génération du quiz...',
+        html: 'Cela peut prendre quelques secondes. Veuillez patienter.',
         allowOutsideClick: false,
         // Prevent the user from closing the alert by clicking outside
         background: '#fff',
@@ -10624,8 +10624,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Show a SweetAlert modal during the PDF generation
       Swal.fire({
-        title: 'Downloading...',
-        text: "The PDF is being generated. This may take a few seconds.",
+        title: 'Téléchargement...',
+        text: "Le PDF est en train d'être généré. Cela peut prendre quelques secondes.",
         icon: 'info',
         // Info icon for user feedback
         showCancelButton: false,
